@@ -202,8 +202,17 @@ export default function Home() {
   const getLangName = (lang: string) => langNames[lang] || lang
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4 md:p-8">
-      <div className="max-w-4xl mx-auto">
+    <div 
+      className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4 md:p-8 overflow-y-auto" 
+      style={{ 
+        touchAction: 'manipulation',
+        WebkitOverflowScrolling: 'touch',
+        height: '100vh',
+        height: '100dvh',
+        overscrollBehavior: 'contain'
+      }}
+    >
+      <div className="max-w-4xl mx-auto pb-8">
         {/* 标题 */}
         <div className="text-center mb-8">
           <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-2 flex items-center justify-center gap-2">
@@ -218,7 +227,8 @@ export default function Home() {
           <div className="mb-6">
             <label className="block text-sm font-medium text-gray-700 mb-2">输入文本</label>
             <textarea
-              className="w-full h-40 p-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+              className="w-full h-40 p-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none text-base"
+              style={{ touchAction: 'manipulation' }}
               placeholder="请输入要转换为语音的文本..."
               value={text}
               onChange={(e) => setText(e.target.value)}
@@ -232,7 +242,8 @@ export default function Home() {
           <div className="mb-6">
             <label className="block text-sm font-medium text-gray-700 mb-2">选择发音人</label>
             <select
-              className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base"
+              style={{ touchAction: 'manipulation' }}
               value={selectedVoice}
               onChange={(e) => setSelectedVoice(e.target.value)}
               disabled={loadingVoices}
@@ -265,7 +276,8 @@ export default function Home() {
                 max="50"
                 value={rate}
                 onChange={(e) => setRate(Number(e.target.value))}
-                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                className="w-full h-3 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                style={{ touchAction: 'none' }}
               />
             </div>
             <div>
@@ -278,7 +290,8 @@ export default function Home() {
                 max="50"
                 value={volume}
                 onChange={(e) => setVolume(Number(e.target.value))}
-                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                className="w-full h-3 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                style={{ touchAction: 'none' }}
               />
             </div>
             <div>
@@ -291,7 +304,8 @@ export default function Home() {
                 max="20"
                 value={pitch}
                 onChange={(e) => setPitch(Number(e.target.value))}
-                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                className="w-full h-3 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                style={{ touchAction: 'none' }}
               />
             </div>
           </div>
@@ -300,7 +314,8 @@ export default function Home() {
           <button
             onClick={handleGenerate}
             disabled={loading || !text.trim() || !selectedVoice}
-            className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-semibold py-4 px-6 rounded-xl transition-colors flex items-center justify-center gap-2"
+            className="w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 disabled:bg-gray-400 text-white font-semibold py-4 px-6 rounded-xl transition-colors flex items-center justify-center gap-2 select-none touch-manipulation"
+            style={{ touchAction: 'manipulation' }}
           >
             {loading ? (
               <>
@@ -337,7 +352,8 @@ export default function Home() {
               <div className="flex items-center gap-4 mb-4">
                 <button
                   onClick={togglePlay}
-                  className="w-12 h-12 bg-blue-600 hover:bg-blue-700 text-white rounded-full flex items-center justify-center"
+                  className="w-12 h-12 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white rounded-full flex items-center justify-center select-none touch-manipulation flex-shrink-0"
+                  style={{ touchAction: 'manipulation' }}
                 >
                   {isPlaying ? <Pause className="w-6 h-6" /> : <Play className="w-6 h-6 ml-1" />}
                 </button>
@@ -354,7 +370,8 @@ export default function Home() {
                 </div>
                 <button
                   onClick={handleDownload}
-                  className="w-12 h-12 bg-green-600 hover:bg-green-700 text-white rounded-full flex items-center justify-center"
+                  className="w-12 h-12 bg-green-600 hover:bg-green-700 active:bg-green-800 text-white rounded-full flex items-center justify-center select-none touch-manipulation flex-shrink-0"
+                  style={{ touchAction: 'manipulation' }}
                 >
                   <Download className="w-6 h-6" />
                 </button>
