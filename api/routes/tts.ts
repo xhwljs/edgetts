@@ -1,4 +1,3 @@
-
 import express, { type Request, type Response } from 'express'
 import { getVoices, tts } from 'edge-tts'
 
@@ -37,6 +36,7 @@ router.post('/generate', async (req: Request, res: Response) => {
       })
     }
 
+    console.log('Generating audio for:', voice)
     const audioBuffer = await tts(text, {
       voice,
       rate,
@@ -44,7 +44,9 @@ router.post('/generate', async (req: Request, res: Response) => {
       pitch
     })
 
+    console.log('Audio generated, size:', audioBuffer.length)
     res.setHeader('Content-Type', 'audio/mpeg')
+    res.setHeader('Content-Length', Buffer.byteLength(audioBuffer))
     res.setHeader('Content-Disposition', 'attachment; filename="audio.mp3"')
     res.send(audioBuffer)
   } catch (error) {

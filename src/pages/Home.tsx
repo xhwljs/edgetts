@@ -1,6 +1,5 @@
-
 import { useState, useEffect, useRef } from 'react'
-import { Mic, Download, Play, Pause, Volume2, VolumeX, Loader2 } from 'lucide-react'
+import { Mic, Download, Play, Pause, Loader2 } from 'lucide-react'
 
 interface Voice {
   Name: string
@@ -31,7 +30,6 @@ export default function Home() {
         const response = await fetch('/api/voices')
         const data = await response.json()
         
-        // 按语言分组，中文优先排序
         const groupedVoices = data.reduce((acc: any, voice: Voice) => {
           const lang = voice.Locale.split('-')[0]
           if (!acc[lang]) acc[lang] = []
@@ -39,13 +37,11 @@ export default function Home() {
           return acc
         }, {})
         
-        // 按语言优先级排序（中英文优先）
         const langOrder = ['zh', 'en', 'ja', 'ko', 'fr', 'de', 'es', 'it', 'pt', 'ru']
         const sortedVoices = langOrder.flatMap(lang => groupedVoices[lang] || [])
         
         setVoices(sortedVoices)
         
-        // 默认选择中文发音人
         const chineseVoice = data.find((v: Voice) => v.Locale.startsWith('zh-'))
         if (chineseVoice) {
           setSelectedVoice(chineseVoice.ShortName)
@@ -61,18 +57,15 @@ export default function Home() {
     fetchVoices()
   }, [])
 
-  // 生成音频
+  // 生成音频 - 简化版本，避免流读取问题
   const handleGenerate = async () => {
     if (!text.trim() || !selectedVoice) return
 
     setLoading(true)
-    setProgress(0)
-    setProgressText('正在连接服务器...')
+    setProgress(10)
+    setProgressText('正在生成音频...')
     
     try {
-      setProgress(10)
-      setProgressText('正在发送请求...')
-      
       const response = await fetch('/api/generate', {
         method: 'POST',
         headers: {
@@ -89,46 +82,16 @@ export default function Home() {
 
       if (!response.ok) throw new Error('Failed to generate audio')
 
-      setProgress(30)
-      setProgressText('正在生成音频...')
-      
-      // 获取总内容长度
-      const contentLength = response.headers.get('content-length')
-      const total = parseInt(contentLength || '0', 10)
-      
-      // 读取响应流
-      const reader = response.body?.getReader()
-      const chunks: Uint8Array[] = []
-      let receivedLength = 0
+      setProgress(50)
+      setProgressText('正在处理...')
 
-      if (reader) {
-        while (true) {
-          const { done, value } = await reader.read()
-          if (done) break
-          
-          chunks.push(value)
-          receivedLength += value.length
-          
-          if (total > 0) {
-            const progressPercent = 30 + Math.round((receivedLength / total) * 60)
-            setProgress(progressPercent)
-            setProgressText(`正在下载音频... ${Math.round((receivedLength / total) * 100)}%`)
-          }
-        }
-      }
-
-      setProgress(90)
-      setProgressText('正在处理音频...')
-      
-      // 合并所有chunks
-      const blob = new Blob(chunks, { type: 'audio/mpeg' })
+      const blob = await response.blob()
       const url = URL.createObjectURL(blob)
       setAudioUrl(url)
       
       setProgress(100)
       setProgressText('生成完成！')
       
-      // 2秒后清除进度
       setTimeout(() => {
         setProgress(0)
         setProgressText('')
@@ -144,7 +107,6 @@ export default function Home() {
     }
   }
 
-  // 下载音频
   const handleDownload = () => {
     if (!audioUrl) return
     const a = document.createElement('a')
@@ -153,7 +115,6 @@ export default function Home() {
     a.click()
   }
 
-  // 播放/暂停
   const togglePlay = () => {
     if (!audioRef.current) return
     if (isPlaying) {
@@ -164,7 +125,6 @@ export default function Home() {
     setIsPlaying(!isPlaying)
   }
 
-  // 按语言分组发音人
   const groupedVoices = voices.reduce((acc, voice) => {
     const lang = voice.Locale.split('-')[0]
     if (!acc[lang]) acc[lang] = []
@@ -172,7 +132,6 @@ export default function Home() {
     return acc
   }, {} as Record<string, Voice[]>)
 
-  // 语言代码到中文名称的映射
   const langNames: Record<string, string> = {
     'zh': '中文', 'en': '英语', 'ja': '日语', 'ko': '韩语',
     'fr': '法语', 'de': '德语', 'es': '西班牙语', 'it': '意大利语',
@@ -198,7 +157,6 @@ export default function Home() {
     'bs': '波斯尼亚语', 'nl': '荷兰语'
   }
 
-  // 获取语言显示名称
   const getLangName = (lang: string) => langNames[lang] || lang
 
   return (
@@ -212,7 +170,6 @@ export default function Home() {
       }}
     >
       <div className="max-w-4xl mx-auto pb-8">
-        {/* 标题 */}
         <div className="text-center mb-8">
           <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-2 flex items-center justify-center gap-2">
             <Mic className="w-10 h-10 text-blue-600" />
@@ -222,7 +179,6 @@ export default function Home() {
         </div>
 
         <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8">
-          {/* 文本输入 */}
           <div className="mb-6">
             <label className="block text-sm font-medium text-gray-700 mb-2">输入文本</label>
             <textarea
@@ -237,7 +193,6 @@ export default function Home() {
             </div>
           </div>
 
-          {/* 发音人选择 */}
           <div className="mb-6">
             <label className="block text-sm font-medium text-gray-700 mb-2">选择发音人</label>
             <select
@@ -263,7 +218,6 @@ export default function Home() {
             </select>
           </div>
 
-          {/* 参数调节 */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -309,7 +263,6 @@ export default function Home() {
             </div>
           </div>
 
-          {/* 生成按钮 */}
           <button
             onClick={handleGenerate}
             disabled={loading || !text.trim() || !selectedVoice}
@@ -329,7 +282,6 @@ export default function Home() {
             )}
           </button>
 
-          {/* 进度条 */}
           {loading && progress > 0 && (
             <div className="mt-6">
               <div className="flex items-center justify-between mb-2">
@@ -345,7 +297,6 @@ export default function Home() {
             </div>
           )}
 
-          {/* 音频播放器 */}
           {audioUrl && (
             <div className="mt-8 p-6 bg-gray-50 rounded-xl">
               <div className="flex items-center gap-4 mb-4">
@@ -379,7 +330,6 @@ export default function Home() {
           )}
         </div>
 
-        {/* 页脚 */}
         <div className="text-center mt-8 text-gray-500 text-sm">
           使用 EdgeTTS 技术
         </div>
