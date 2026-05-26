@@ -10,7 +10,6 @@ interface Voice {
   Locale: string
 }
 
-// 获取发音人列表
 router.get('/voices', async (req: Request, res: Response) => {
   try {
     const voices = await getVoices()
@@ -24,7 +23,6 @@ router.get('/voices', async (req: Request, res: Response) => {
   }
 })
 
-// 生成音频
 router.post('/generate', async (req: Request, res: Response) => {
   try {
     const { text, voice, rate = '+0%', volume = '+0%', pitch = '+0Hz' } = req.body
@@ -37,6 +35,7 @@ router.post('/generate', async (req: Request, res: Response) => {
     }
 
     console.log('Generating audio for:', voice)
+    
     const audioBuffer = await tts(text, {
       voice,
       rate,
@@ -49,12 +48,20 @@ router.post('/generate', async (req: Request, res: Response) => {
     res.setHeader('Content-Length', Buffer.byteLength(audioBuffer))
     res.setHeader('Content-Disposition', 'attachment; filename="audio.mp3"')
     res.send(audioBuffer)
-  } catch (error) {
-    console.error('Error generating audio:', error)
-    res.status(500).json({
-      success: false,
-      error: 'Failed to generate audio'
-    })
+  } catch (error: any) {
+    console.error('Error generating audio:', error.message || error)
+    
+    if (error.message?.includes('403')) {
+      res.status(503).json({
+        success: false,
+        error: '服务暂时不可用，请检查网络连接或稍后重试'
+      })
+    } else {
+      res.status(500).json({
+        success: false,
+        error: '生成音频失败，请重试'
+      })
+    }
   }
 })
 
