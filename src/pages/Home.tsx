@@ -28,8 +28,26 @@ export default function Home() {
       try {
         const response = await fetch('/api/voices')
         const data = await response.json()
-        setVoices(data)
-        if (data.length > 0) {
+        
+        // 按语言分组，中文优先排序
+        const groupedVoices = data.reduce((acc: any, voice: Voice) => {
+          const lang = voice.Locale.split('-')[0]
+          if (!acc[lang]) acc[lang] = []
+          acc[lang].push(voice)
+          return acc
+        }, {})
+        
+        // 按语言优先级排序（中英文优先）
+        const langOrder = ['zh', 'en', 'ja', 'ko', 'fr', 'de', 'es', 'it', 'pt', 'ru']
+        const sortedVoices = langOrder.flatMap(lang => groupedVoices[lang] || [])
+        
+        setVoices(sortedVoices)
+        
+        // 默认选择中文发音人
+        const chineseVoice = data.find((v: Voice) => v.Locale.startsWith('zh-'))
+        if (chineseVoice) {
+          setSelectedVoice(chineseVoice.ShortName)
+        } else if (data.length > 0) {
           setSelectedVoice(data[0].ShortName)
         }
       } catch (error) {
