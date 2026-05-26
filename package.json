@@ -4,11 +4,12 @@
   "description": "Edge TTS在线音频制作工具",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "npm run server",
     "build": "vite build",
     "preview": "vite preview",
     "server": "node server/index.js",
-    "start": "node server/index.js"
+    "start": "node server/index.js",
+    "install-all": "npm install && cd server && npm install"
   },
   "dependencies": {
     "react": "^18.2.0",
