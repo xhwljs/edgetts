@@ -20,6 +20,8 @@ export default function Home() {
   const [loadingVoices, setLoadingVoices] = useState(true)
   const [audioUrl, setAudioUrl] = useState<string | null>(null)
   const [isPlaying, setIsPlaying] = useState(false)
+  const [progress, setProgress] = useState(0)
+  const [progressText, setProgressText] = useState('')
   const audioRef = useRef<HTMLAudioElement | null>(null)
 
   // 获取发音人列表
@@ -64,7 +66,13 @@ export default function Home() {
     if (!text.trim() || !selectedVoice) return
 
     setLoading(true)
+    setProgress(0)
+    setProgressText('正在连接服务器...')
+    
     try {
+      setProgress(10)
+      setProgressText('正在发送请求...')
+      
       const response = await fetch('/api/generate', {
         method: 'POST',
         headers: {
@@ -81,12 +89,56 @@ export default function Home() {
 
       if (!response.ok) throw new Error('Failed to generate audio')
 
-      const blob = await response.blob()
+      setProgress(30)
+      setProgressText('正在生成音频...')
+      
+      // 获取总内容长度
+      const contentLength = response.headers.get('content-length')
+      const total = parseInt(contentLength || '0', 10)
+      
+      // 读取响应流
+      const reader = response.body?.getReader()
+      const chunks: Uint8Array[] = []
+      let receivedLength = 0
+
+      if (reader) {
+        while (true) {
+          const { done, value } = await reader.read()
+          if (done) break
+          
+          chunks.push(value)
+          receivedLength += value.length
+          
+          if (total > 0) {
+            const progressPercent = 30 + Math.round((receivedLength / total) * 60)
+            setProgress(progressPercent)
+            setProgressText(`正在下载音频... ${Math.round((receivedLength / total) * 100)}%`)
+          }
+        }
+      }
+
+      setProgress(90)
+      setProgressText('正在处理音频...')
+      
+      // 合并所有chunks
+      const blob = new Blob(chunks, { type: 'audio/mpeg' })
       const url = URL.createObjectURL(blob)
       setAudioUrl(url)
+      
+      setProgress(100)
+      setProgressText('生成完成！')
+      
+      // 2秒后清除进度
+      setTimeout(() => {
+        setProgress(0)
+        setProgressText('')
+      }, 2000)
+      
     } catch (error) {
       console.error('Failed to generate audio:', error)
       alert('生成音频失败，请重试')
+      setProgress(0)
+      setProgressText('')
     } finally {
       setLoading(false)
     }
@@ -233,6 +285,22 @@ export default function Home() {
               </>
             )}
           </button>
+
+          {/* 进度条 */}
+          {loading && progress > 0 && (
+            <div className="mt-6">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-medium text-gray-700">{progressText}</span>
+                <span className="text-sm font-medium text-blue-600">{progress}%</span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
+                <div
+                  className="bg-gradient-to-r from-blue-500 to-blue-600 h-full rounded-full transition-all duration-300 ease-out"
+                  style={{ width: `${progress}%` }}
+                />
+              </div>
+            </div>
+          )}
 
           {/* 音频播放器 */}
           {audioUrl && (
