@@ -192,7 +192,7 @@ export default function Home() {
     'si': '僧伽罗语', 'my': '缅甸语', 'km': '高棉语', 'lo': '老挝语',
     'bn': '孟加拉语', 'pa': '旁遮普语', 'te': '泰卢固语', 'ta': '泰米尔语',
     'mr': '马拉地语', 'gu': '古吉拉特语', 'kn': '卡纳达语', 'ml': '马拉雅拉姆语',
-    'or': '奥里亚语', 'tl': '他加禄语', 'fil': '菲律宾语', 'km': '高棉语',
+    'or': '奥里亚语', 'tl': '他加禄语', 'fil': '菲律宾语',
     'uz': '乌兹别克语', 'kk': '哈萨克语', 'ky': '吉尔吉斯语', 'mn': '蒙古语',
     'ka': '格鲁吉亚语', 'hy': '亚美尼亚语', 'az': '阿塞拜疆语', 'mk': '马其顿语',
     'bs': '波斯尼亚语', 'nl': '荷兰语'
@@ -207,7 +207,6 @@ export default function Home() {
       style={{ 
         touchAction: 'manipulation',
         WebkitOverflowScrolling: 'touch',
-        height: '100vh',
         height: '100dvh',
         overscrollBehavior: 'contain'
       }}
