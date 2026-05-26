@@ -11,12 +11,14 @@
 - 📥 **一键下载** - 支持MP3格式下载
 - 📱 **移动端适配** - 完美支持Termux部署
 - 🚀 **轻量快速** - 界面简洁，操作便捷
+- 💾 **Git版本管理** - 完整的Git仓库支持
 
 ## 技术栈
 
 - **前端**: React 18 + Vite + TailwindCSS
 - **后端**: Express.js + edge-tts
 - **部署**: 支持Docker、Node.js、Termux
+- **版本控制**: Git
 
 ## 快速开始
 
@@ -48,45 +50,197 @@ npm start
 # 访问 http://localhost:3001
 ```
 
+## Git仓库设置
+
+### 第一步：创建远程仓库
+
+在以下平台之一创建一个新的空仓库（不要初始化README、.gitignore或License）：
+
+#### 🏠 GitHub
+1. 访问 https://github.com/new
+2. 填写仓库名称（例如：`edge-tts-tool`）
+3. 选择 Public 或 Private
+4. 点击 "Create repository"
+5. 复制仓库地址（例如：`https://github.com/你的用户名/edge-tts-tool.git`）
+
+#### 🇨🇳 Gitee（码云）
+1. 访问 https://gitee.com/projects/new
+2. 填写仓库名称
+3. 选择 公开 或 私有
+4. 点击 "创建"
+5. 复制仓库地址
+
+#### 🦊 GitLab
+1. 访问 https://gitlab.com/projects/new
+2. 填写仓库名称
+3. 选择 Visibility Level
+4. 点击 "Create project"
+5. 复制仓库地址
+
+### 第二步：关联远程仓库并推送
+
+```bash
+# 查看当前仓库状态
+git status
+
+# 添加远程仓库（替换为你的实际仓库地址）
+git remote add origin https://github.com/你的用户名/edge-tts-tool.git
+
+# 或者使用SSH方式（如果配置了SSH密钥）
+# git remote add origin git@github.com:你的用户名/edge-tts-tool.git
+
+# 查看远程仓库配置
+git remote -v
+
+# 推送到远程仓库
+git push -u origin main
+```
+
+### 第三步：后续更新
+
+```bash
+# 查看修改
+git status
+
+# 添加修改
+git add .
+
+# 提交
+git commit -m "描述你的修改"
+
+# 推送
+git push
+```
+
 ## Termux移动端部署
 
-### 步骤1: 安装Termux
+### 前置准备
 
-从F-Droid下载并安装Termux（不要从Google Play安装）
+#### 1. 安装Termux
+从 F-Droid 下载并安装 Termux（不要从 Google Play 安装，版本过旧）：
+- 访问：https://f-droid.org/packages/com.termux/
+- 下载并安装最新的 APK
 
-### 步骤2: 运行部署脚本
+#### 2. 配置Termux
+```bash
+# 更新包管理器
+pkg update && pkg upgrade -y
+
+# 安装基础工具
+pkg install git nodejs curl wget -y
+```
+
+### 完整部署流程
+
+#### 方式一：从远程仓库克隆（推荐）
 
 ```bash
-# 克隆项目（如果没有）
-git clone <your-repo-url>
+# 1. 克隆项目（替换为你的实际仓库地址）
+git clone https://github.com/你的用户名/edge-tts-tool.git
 cd edge-tts-tool
 
-# 运行部署脚本
+# 2. 运行部署脚本
+chmod +x deploy-termux.sh
 bash deploy-termux.sh
-```
 
-### 步骤3: 启动服务
+# 3. 安装依赖（如果脚本没有自动完成）
+npm install
+cd server && npm install && cd ..
 
-```bash
-# 启动后端服务
+# 4. 启动后端服务（终端1）
 node server/index.js
 
-# 新开一个终端启动前端
+# 5. 新开终端（在Termux中从左侧滑出菜单新建会话）启动前端
+cd edge-tts-tool
 npm run dev
 
-# 在浏览器中访问 http://localhost:5173
+# 6. 在浏览器中访问
+# 开发模式：http://localhost:5173
+# 或生产模式：npm run build && npm start，访问 http://localhost:3001
 ```
 
-或者使用生产模式：
+#### 方式二：本地文件传输（如果无法访问远程仓库）
 
+1. 使用 ADB 或文件管理器将项目文件传输到 Termux
+2. Termux 的主目录位于：`/data/data/com.termux/files/home/`
+3. 然后按照方式一的步骤2-6执行
+
+### Termux使用技巧
+
+#### 分屏运行
 ```bash
-# 构建前端
-npm run build
+# 在Termux中按 Ctrl + N 新建会话
+# 或从左侧菜单选择 "New session"
 
-# 启动服务
+# 会话1：运行后端
+cd ~/edge-tts-tool
+node server/index.js
+
+# 会话2：运行前端
+cd ~/edge-tts-tool
+npm run dev
+```
+
+#### 后台运行
+```bash
+# 使用 tmux 或 nohup 保持服务后台运行
+pkg install tmux -y
+
+# 创建tmux会话
+tmux new -s tts
+
+# 在tmux会话中启动服务
+cd ~/edge-tts-tool
 npm start
 
-# 访问 http://localhost:3001
+# 按 Ctrl + B 然后按 D 分离会话
+
+# 重新连接
+tmux attach -t tts
+```
+
+#### 访问局域网其他设备
+```bash
+# 查看Termux的IP地址
+ip addr show | grep inet
+
+# 修改 server/index.js 监听 0.0.0.0
+# 然后从局域网其他设备访问 http://你的手机IP:3001
+```
+
+## 常见问题
+
+### Q: 提示 "fatal: remote origin already exists"
+A: 先删除旧的远程仓库再添加
+```bash
+git remote remove origin
+git remote add origin <你的仓库地址>
+```
+
+### Q: 推送时提示 "Authentication failed"
+A: 
+- GitHub：使用 Personal Access Token 替代密码
+- Gitee/GitLab：可能需要设置账户信息
+```bash
+git config --global user.name "你的用户名"
+git config --global user.email "你的邮箱"
+```
+
+### Q: Termux中下载依赖很慢
+A: 配置国内镜像源
+```bash
+# npm配置淘宝源
+npm config set registry https://registry.npmmirror.com
+```
+
+### Q: 如何将项目分享给其他人？
+A: 将仓库设为 Public，然后分享仓库链接，其他人可以：
+```bash
+git clone <你的仓库地址>
+cd edge-tts-tool
+npm install
+cd server && npm install && cd ..
+npm start
 ```
 
 ## API接口
@@ -168,6 +322,7 @@ chore: 构建或辅助工具更新
 - 确保网络连接正常（访问Edge TTS API）
 - Termux环境下建议使用WiFi网络
 - 首次使用可能需要等待依赖下载完成
+- 及时备份代码到远程Git仓库
 
 ## License
 
