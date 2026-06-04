@@ -16,6 +16,7 @@ let isChallengeMode = false;
 let challengeGroupId = 0;
 let challengeLevelId = 0;
 let timerInterval = null;
+let soundEnabled = true;
 
 const CORRECT_MESSAGES = ['太棒了！', '正确！', '真聪明！', '答对了！', '做得好！', '真厉害！'];
 const WRONG_MESSAGES = ['再想想！', '不对哦！', '加油！', '继续努力！', '别灰心！'];
@@ -37,6 +38,8 @@ function showPage(pageId) {
         loadShop();
     } else if (pageId === 'challenge') {
         loadChallenge();
+    } else if (pageId === 'medals') {
+        loadMedals();
     }
 }
 
@@ -300,29 +303,45 @@ function submitAnswer() {
     if (isCorrect) {
         correctCount++;
         showFeedback('correct', CORRECT_MESSAGES[Math.floor(Math.random() * CORRECT_MESSAGES.length)]);
-        Utils.playSound('correct');
+        if (soundEnabled) Utils.playSound('correct');
+        
+        // 如果是错题重练模式，答对的题目从错题本中移除
+        if (practiceType === '错题重练') {
+            removeFromWrongList(currentQuestion);
+        }
     } else {
         wrongCount++;
         showFeedback('wrong', `${WRONG_MESSAGES[Math.floor(Math.random() * WRONG_MESSAGES.length)]} 正确答案是 ${currentQuestion.answer}`);
-        Utils.playSound('wrong');
+        if (soundEnabled) Utils.playSound('wrong');
         
-        // 保存错题
-        Storage.addWrongQuestion({
-            num1: currentQuestion.num1,
-            num2: currentQuestion.num2,
-            op: currentQuestion.op,
-            userAnswer: answerNum,
-            correctAnswer: currentQuestion.answer,
-            type: currentQuestion.type,
-            content: currentQuestion.content || `${currentQuestion.num1} ${currentQuestion.op} ${currentQuestion.num2}`,
-            timestamp: Date.now()
-        });
+        // 保存错题（错题重练模式不重复保存）
+        if (practiceType !== '错题重练') {
+            Storage.addWrongQuestion({
+                num1: currentQuestion.num1,
+                num2: currentQuestion.num2,
+                op: currentQuestion.op,
+                userAnswer: answerNum,
+                correctAnswer: currentQuestion.answer,
+                type: currentQuestion.type,
+                content: currentQuestion.content || `${currentQuestion.num1} ${currentQuestion.op} ${currentQuestion.num2}`,
+                timestamp: Date.now()
+            });
+        }
     }
     
     setTimeout(() => {
         currentIndex++;
         loadCurrentQuestion();
     }, 1200);
+}
+
+// 切换声音
+function toggleSound() {
+    soundEnabled = !soundEnabled;
+    const soundBtn = document.getElementById('sound-btn');
+    if (soundBtn) {
+        soundBtn.textContent = soundEnabled ? '🔊' : '🔇';
+    }
 }
 
 // 显示反馈
@@ -444,6 +463,13 @@ function showResult(correct, wrong, time, coins) {
     const isPerfect = correct === currentQuestions.length;
     const accuracy = Math.round((correct / currentQuestions.length) * 100);
     
+    // 播放完成音效
+    if (soundEnabled) {
+        try {
+            Utils.playSound(isPerfect ? 'correct' : 'correct');
+        } catch (e) {}
+    }
+    
     resultPage.innerHTML = `
         <div class="header">
             <button class="back-btn" onclick="showPage('home-page')">← 返回首页</button>
@@ -522,11 +548,82 @@ function loadWrongList() {
                     </div>
                 `).join('')}
             </div>
-            <button class="clear-btn" onclick="clearWrongList()">🗑️ 清空错题本</button>
+            <div style="display: flex; gap: 10px; margin-top: 15px;">
+                <button class="start-btn" onclick="practiceWrongList()" style="flex: 1; padding: 12px; font-size: 14px;">
+                    📝 错题重练
+                </button>
+                <button class="clear-btn" onclick="clearWrongList()" style="flex: 1; padding: 12px; font-size: 14px;">
+                    🗑️ 清空错题本
+                </button>
+            </div>
         `;
     }
     
     Storage.updateDailyTask(4, 1);
+}
+
+// 从错题本中移除题目
+function removeFromWrongList(question) {
+    let wrongList = Storage.getWrongQuestions();
+    wrongList = wrongList.filter(q => 
+        !(q.num1 === question.num1 && 
+          q.num2 === question.num2 && 
+          q.op === question.op)
+    );
+    Storage.saveWrongQuestions(wrongList);
+}
+
+// 错题重练
+function practiceWrongList() {
+    const wrongList = Storage.getWrongQuestions();
+    if (wrongList.length === 0) {
+        alert('没有错题需要练习！');
+        return;
+    }
+    
+    isChallengeMode = false;
+    practiceType = '错题重练';
+    
+    // 从错题中生成题目
+    currentQuestions = wrongList.map(item => {
+        return {
+            id: Utils.generateId(),
+            type: item.type || 'oral',
+            num1: item.num1,
+            num2: item.num2,
+            op: item.op,
+            content: item.content,
+            answer: item.correctAnswer
+        };
+    });
+    
+    currentQuestions = Utils.shuffleArray(currentQuestions);
+    startPracticeSession();
+}
+
+// 加载勋章页面
+function loadMedals() {
+    const medals = Storage.getMedalsData();
+    const container = document.querySelector('.medals-content');
+    
+    if (!container) return;
+    
+    const unlockedCount = medals.filter(m => m.unlocked).length;
+    
+    container.innerHTML = `
+        <div style="text-align: center; margin-bottom: 20px; font-size: 16px;">
+            已解锁: <span style="font-weight: bold; color: #667eea;">${unlockedCount}</span> / ${medals.length}
+        </div>
+        <div class="medals-grid">
+            ${medals.map(m => `
+                <div class="medal-item ${m.unlocked ? 'unlocked' : ''}">
+                    <span class="medal-icon">${m.unlocked ? m.icon : '🔒'}</span>
+                    <span class="medal-name">${m.name}</span>
+                    <span class="medal-desc">${m.description}</span>
+                </div>
+            `).join('')}
+        </div>
+    `;
 }
 
 // 清空错题本
@@ -541,6 +638,7 @@ function clearWrongList() {
 function loadParentMode() {
     const user = Storage.getUserData();
     const history = Storage.getPracticeHistory();
+    const wrongList = Storage.getWrongQuestions();
     
     const accuracy = user.totalCorrect + user.totalWrong > 0 
         ? Math.round((user.totalCorrect / (user.totalCorrect + user.totalWrong)) * 100) 
@@ -548,6 +646,9 @@ function loadParentMode() {
     
     const container = document.querySelector('.parent-content');
     if (!container) return;
+    
+    // 简单的进度条可视化
+    const accuracyWidth = accuracy;
     
     container.innerHTML = `
         <div class="stats-section">
@@ -570,6 +671,17 @@ function loadParentMode() {
                     <span class="stat-desc">正确率</span>
                 </div>
             </div>
+            
+            <!-- 正确率进度条 -->
+            <div style="margin-top: 15px;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                    <span style="font-size: 13px; color: #666;">正确率</span>
+                    <span style="font-size: 13px; font-weight: bold; color: #667eea;">${accuracy}%</span>
+                </div>
+                <div style="width: 100%; height: 16px; background: #f0f0f0; border-radius: 8px; overflow: hidden;">
+                    <div style="width: ${accuracyWidth}%; height: 100%; background: linear-gradient(90deg, #667eea 0%, #764ba2 100%); border-radius: 8px; transition: width 0.5s;"></div>
+                </div>
+            </div>
         </div>
         <div class="history-section">
             <h3>📜 练习记录</h3>
@@ -589,8 +701,10 @@ function loadParentMode() {
                 </div>
             `}
         </div>
-        <button class="export-btn" onclick="exportData()">📤 导出数据</button>
-        <button class="export-btn" onclick="importData()" style="background: #4caf50; margin-top: 10px;">📥 导入数据</button>
+        <div style="display: flex; gap: 10px; margin-top: 15px;">
+            <button class="export-btn" onclick="exportData()" style="flex: 1;">📤 导出数据</button>
+            <button class="export-btn" onclick="importData()" style="flex: 1; background: #4caf50;">📥 导入数据</button>
+        </div>
     `;
 }
 

@@ -44,11 +44,14 @@
                 <button class="action-btn" onclick="showPage('wrong-list')">
                     <span>📝 错题本</span>
                 </button>
-                <button class="action-btn" onclick="showPage('parent-mode')">
-                    <span>👨‍👩‍👧 家长模式</span>
+                <button class="action-btn" onclick="showPage('medals')">
+                    <span>🏅 我的勋章</span>
                 </button>
                 <button class="action-btn" onclick="showPage('shop')">
                     <span>🛒 主题商店</span>
+                </button>
+                <button class="action-btn" onclick="showPage('parent-mode')">
+                    <span>👨‍👩‍👧 家长模式</span>
                 </button>
             </div>
         </div>
@@ -149,6 +152,7 @@
                 <button class="back-btn" onclick="confirmExit()">← 退出</button>
                 <div class="progress"><span>1/10</span></div>
                 <div class="timer">⏱️ <span id="timer-display">0:00</span></div>
+                <button id="sound-btn" class="sound-btn" onclick="toggleSound()">🔊</button>
             </div>
             
             <div class="question-area"></div>
@@ -189,6 +193,15 @@
                 <h2>📝 错题本</h2>
             </div>
             <div class="wrong-content"></div>
+        </div>
+
+        <!-- 勋章页面 -->
+        <div id="medals" class="page">
+            <div class="header">
+                <button class="back-btn" onclick="showPage('home-page')">← 返回</button>
+                <h2>🏅 我的勋章</h2>
+            </div>
+            <div class="medals-content"></div>
         </div>
 
         <!-- 家长模式页面 -->
