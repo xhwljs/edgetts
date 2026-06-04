@@ -2,18 +2,19 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>数学乐园 - 快乐学习</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div id="app">
+        <!-- 首页 -->
         <div id="home-page" class="page active">
             <div class="header">
                 <h1 class="title">🧮 数学乐园</h1>
                 <div class="user-info">
-                    <span class="coins">💰 {{coins}}</span>
-                    <span class="level">等级 {{level}}</span>
+                    <span class="coins">💰 0</span>
+                    <span class="level">等级 1</span>
                 </div>
             </div>
             
@@ -36,14 +37,7 @@
             
             <div class="daily-tasks">
                 <h3>📋 每日任务</h3>
-                <div class="tasks-list">
-                    <div class="task" v-for="task in dailyTasks" :key="task.id">
-                        <span class="task-icon">{{task.icon}}</span>
-                        <span class="task-text">{{task.name}}</span>
-                        <span class="task-progress">{{task.progress}}/{{task.target}}</span>
-                        <span class="task-reward">+{{task.reward}}💰</span>
-                    </div>
-                </div>
+                <div class="tasks-list"></div>
             </div>
             
             <div class="quick-actions">
@@ -59,6 +53,7 @@
             </div>
         </div>
 
+        <!-- 自定义练习页面 -->
         <div id="custom-practice" class="page">
             <div class="header">
                 <button class="back-btn" onclick="showPage('home-page')">← 返回</button>
@@ -68,55 +63,47 @@
             <div class="practice-config">
                 <div class="section">
                     <h3>选择题型</h3>
-                    <div class="options">
-                        <button class="option-btn" :class="{active: selectedType === 'oral'}" onclick="selectType('oral')">
-                            🗣️ 口算题
-                        </button>
-                        <button class="option-btn" :class="{active: selectedType === 'fill'}" onclick="selectType('fill')">
-                            ✏️ 填空题
-                        </button>
+                    <div class="options" id="type-options">
+                        <button class="option-btn active" onclick="selectType('oral')">🗣️ 口算题</button>
+                        <button class="option-btn" onclick="selectType('fill')">✏️ 填空题</button>
+                        <button class="option-btn" onclick="selectType('multi')">🔢 连加连减</button>
                     </div>
                 </div>
                 
                 <div class="section">
                     <h3>选择难度</h3>
-                    <div class="options">
-                        <button class="option-btn" :class="{active: selectedLevel === 1}" onclick="selectLevel(1)">
-                            🌱 0-10
-                        </button>
-                        <button class="option-btn" :class="{active: selectedLevel === 2}" onclick="selectLevel(2)">
-                            🌿 0-20
-                        </button>
-                        <button class="option-btn" :class="{active: selectedLevel === 3}" onclick="selectLevel(3)">
-                            🌳 0-50
-                        </button>
-                        <button class="option-btn" :class="{active: selectedLevel === 4}" onclick="selectLevel(4)">
-                            🌲 0-100
-                        </button>
+                    <div class="options" id="level-options">
+                        <button class="option-btn active" onclick="selectLevel(1)">🌱 0-10</button>
+                        <button class="option-btn" onclick="selectLevel(2)">🌿 0-20</button>
+                        <button class="option-btn" onclick="selectLevel(3)">🌳 0-50</button>
+                        <button class="option-btn" onclick="selectLevel(4)">🌲 0-100</button>
                     </div>
                 </div>
                 
                 <div class="section">
                     <h3>选择运算类型</h3>
-                    <div class="options">
-                        <button class="option-btn" :class="{active: selectedOp === 'add'}" onclick="selectOp('add')">
-                            ➕ 加法
-                        </button>
-                        <button class="option-btn" :class="{active: selectedOp === 'sub'}" onclick="selectOp('sub')">
-                            ➖ 减法
-                        </button>
-                        <button class="option-btn" :class="{active: selectedOp === 'mix'}" onclick="selectOp('mix')">
-                            ➕➖ 混合
-                        </button>
+                    <div class="options" id="op-options">
+                        <button class="option-btn active" onclick="selectOp('add')">➕ 加法</button>
+                        <button class="option-btn" onclick="selectOp('sub')">➖ 减法</button>
+                        <button class="option-btn" onclick="selectOp('mix')">➕➖ 混合</button>
                     </div>
                 </div>
                 
-                <button class="start-btn" onclick="startPractice()">
-                    🚀 开始练习
-                </button>
+                <div class="section">
+                    <h3>题目数量</h3>
+                    <div class="options" id="count-options">
+                        <button class="option-btn" onclick="selectCount(5)">5 题</button>
+                        <button class="option-btn active" onclick="selectCount(10)">10 题</button>
+                        <button class="option-btn" onclick="selectCount(20)">20 题</button>
+                        <button class="option-btn" onclick="selectCount(30)">30 题</button>
+                    </div>
+                </div>
+                
+                <button class="start-btn" onclick="startPractice()">🚀 开始练习</button>
             </div>
         </div>
 
+        <!-- 随机练习页面 -->
         <div id="random-practice" class="page">
             <div class="header">
                 <button class="back-btn" onclick="showPage('home-page')">← 返回</button>
@@ -126,249 +113,110 @@
             <div class="practice-config">
                 <div class="section">
                     <h3>选择难度</h3>
-                    <div class="options">
-                        <button class="option-btn" :class="{active: selectedLevel === 1}" onclick="selectLevel(1)">
-                            🌱 0-10
-                        </button>
-                        <button class="option-btn" :class="{active: selectedLevel === 2}" onclick="selectLevel(2)">
-                            🌿 0-20
-                        </button>
-                        <button class="option-btn" :class="{active: selectedLevel === 3}" onclick="selectLevel(3)">
-                            🌳 0-50
-                        </button>
-                        <button class="option-btn" :class="{active: selectedLevel === 4}" onclick="selectLevel(4)">
-                            🌲 0-100
-                        </button>
+                    <div class="options" id="random-level-options">
+                        <button class="option-btn active" onclick="selectLevel(1)">🌱 0-10</button>
+                        <button class="option-btn" onclick="selectLevel(2)">🌿 0-20</button>
+                        <button class="option-btn" onclick="selectLevel(3)">🌳 0-50</button>
+                        <button class="option-btn" onclick="selectLevel(4)">🌲 0-100</button>
                     </div>
                 </div>
                 
-                <button class="start-btn" onclick="startRandomPractice()">
-                    🎲 开始随机练习
-                </button>
+                <div class="section">
+                    <h3>题目数量</h3>
+                    <div class="options" id="random-count-options">
+                        <button class="option-btn" onclick="selectCount(5)">5 题</button>
+                        <button class="option-btn active" onclick="selectCount(10)">10 题</button>
+                        <button class="option-btn" onclick="selectCount(20)">20 题</button>
+                    </div>
+                </div>
+                
+                <button class="start-btn" onclick="startRandomPractice()">🎲 开始随机练习</button>
             </div>
         </div>
 
+        <!-- 挑战模式页面 -->
         <div id="challenge" class="page">
             <div class="header">
                 <button class="back-btn" onclick="showPage('home-page')">← 返回</button>
                 <h2>🏆 挑战模式</h2>
             </div>
-            
-            <div class="challenge-groups">
-                <div class="challenge-group" v-for="group in challengeGroups" :key="group.id">
-                    <h3>{{group.name}}</h3>
-                    <div class="levels">
-                        <button 
-                            v-for="level in group.levels" 
-                            :key="level.id"
-                            class="level-btn"
-                            :class="{locked: !level.unlocked, completed: level.completed}"
-                            :disabled="!level.unlocked"
-                            onclick="startChallenge(group.id, level.id)"
-                        >
-                            {{level.id}}
-                        </button>
-                    </div>
-                </div>
-            </div>
+            <div class="challenge-groups"></div>
         </div>
 
+        <!-- 练习页面 -->
         <div id="practice-page" class="page">
             <div class="header">
-                <button class="back-btn" onclick="showPage('home-page')">← 退出</button>
-                <div class="progress">
-                    <span>{{currentIndex + 1}}/{{totalQuestions}}</span>
+                <button class="back-btn" onclick="confirmExit()">← 退出</button>
+                <div class="progress"><span>1/10</span></div>
+                <div class="timer">⏱️ <span id="timer-display">0:00</span></div>
+            </div>
+            
+            <div class="question-area"></div>
+            
+            <div class="feedback"></div>
+            
+            <div class="answer-keypad">
+                <div class="keypad-row">
+                    <button class="keypad-btn" onclick="inputNumber(1)">1</button>
+                    <button class="keypad-btn" onclick="inputNumber(2)">2</button>
+                    <button class="keypad-btn" onclick="inputNumber(3)">3</button>
                 </div>
-            </div>
-            
-            <div class="question-area">
-                <div class="question" v-if="currentQuestion">
-                    <div v-if="currentQuestion.type === 'oral'" class="oral-question">
-                        <span class="number">{{currentQuestion.num1}}</span>
-                        <span class="operator">{{currentQuestion.op}}</span>
-                        <span class="number">{{currentQuestion.num2}}</span>
-                        <span class="equals">=</span>
-                        <input type="number" class="answer-input" v-model="userAnswer" @keyup.enter="submitAnswer" />
-                    </div>
-                    
-                    <div v-else class="fill-question">
-                        <div class="fill-content">{{currentQuestion.content}}</div>
-                        <input type="number" class="answer-input" v-model="userAnswer" @keyup.enter="submitAnswer" />
-                    </div>
+                <div class="keypad-row">
+                    <button class="keypad-btn" onclick="inputNumber(4)">4</button>
+                    <button class="keypad-btn" onclick="inputNumber(5)">5</button>
+                    <button class="keypad-btn" onclick="inputNumber(6)">6</button>
                 </div>
-            </div>
-            
-            <div class="feedback" :class="feedbackClass">
-                {{feedbackMessage}}
-            </div>
-            
-            <button class="submit-btn" onclick="submitAnswer()">
-                ✅ 提交答案
-            </button>
-        </div>
-
-        <div id="result-page" class="page">
-            <div class="header">
-                <button class="back-btn" onclick="showPage('home-page')">← 返回首页</button>
-            </div>
-            
-            <div class="result-content">
-                <div class="result-icon">{{isPerfect ? '🎉' : '👍'}}</div>
-                <h2>{{isPerfect ? '太棒了！全对！' : '练习完成！'}}</h2>
-                
-                <div class="stats">
-                    <div class="stat-item">
-                        <span class="stat-value">{{correctCount}}</span>
-                        <span class="stat-label">答对题数</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-value">{{totalTime}}秒</span>
-                        <span class="stat-label">用时</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-value">+{{earnedCoins}}</span>
-                        <span class="stat-label">获得积分</span>
-                    </div>
+                <div class="keypad-row">
+                    <button class="keypad-btn" onclick="inputNumber(7)">7</button>
+                    <button class="keypad-btn" onclick="inputNumber(8)">8</button>
+                    <button class="keypad-btn" onclick="inputNumber(9)">9</button>
                 </div>
-                
-                <div class="result-actions">
-                    <button class="result-btn" onclick="showPage('wrong-list')" v-if="wrongCount > 0">
-                        📝 查看错题 ({{wrongCount}}题)
-                    </button>
-                    <button class="result-btn" onclick="restartPractice()">
-                        🔄 再练一次
-                    </button>
-                    <button class="result-btn" onclick="showPage('home-page')">
-                        🏠 返回首页
-                    </button>
+                <div class="keypad-row">
+                    <button class="keypad-btn clear-btn" onclick="clearInput()">清除</button>
+                    <button class="keypad-btn" onclick="inputNumber(0)">0</button>
+                    <button class="keypad-btn submit-btn" onclick="submitAnswer()">确定</button>
                 </div>
             </div>
         </div>
 
+        <!-- 结果页面 -->
+        <div id="result-page" class="page"></div>
+
+        <!-- 错题本页面 -->
         <div id="wrong-list" class="page">
             <div class="header">
                 <button class="back-btn" onclick="showPage('home-page')">← 返回</button>
                 <h2>📝 错题本</h2>
             </div>
-            
-            <div class="wrong-content">
-                <div v-if="wrongQuestions.length === 0" class="empty-state">
-                    <span>🎉</span>
-                    <p>太棒了！没有错题！</p>
-                </div>
-                
-                <div v-else>
-                    <div class="wrong-list">
-                        <div v-for="(item, index) in wrongQuestions" :key="index" class="wrong-item">
-                            <div class="wrong-question">
-                                <span>{{item.num1}} {{item.op}} {{item.num2}} = ?</span>
-                            </div>
-                            <div class="wrong-info">
-                                <span class="wrong-answer">你的答案: {{item.userAnswer}}</span>
-                                <span class="correct-answer">正确答案: {{item.correctAnswer}}</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <button class="clear-btn" onclick="clearWrongList()">
-                        🗑️ 清空错题本
-                    </button>
-                </div>
-            </div>
+            <div class="wrong-content"></div>
         </div>
 
+        <!-- 家长模式页面 -->
         <div id="parent-mode" class="page">
             <div class="header">
                 <button class="back-btn" onclick="showPage('home-page')">← 返回</button>
                 <h2>👨‍👩‍👧 家长模式</h2>
             </div>
-            
-            <div class="parent-content">
-                <div class="stats-section">
-                    <h3>📊 学习统计</h3>
-                    <div class="stats-grid">
-                        <div class="stat-card">
-                            <span class="stat-num">{{totalPracticeCount}}</span>
-                            <span class="stat-desc">总练习次数</span>
-                        </div>
-                        <div class="stat-card">
-                            <span class="stat-num">{{totalCorrectCount}}</span>
-                            <span class="stat-desc">总答对题数</span>
-                        </div>
-                        <div class="stat-card">
-                            <span class="stat-num">{{totalWrongCount}}</span>
-                            <span class="stat-desc">总错题数</span>
-                        </div>
-                        <div class="stat-card">
-                            <span class="stat-num">{{avgAccuracy}}%</span>
-                            <span class="stat-desc">正确率</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="history-section">
-                    <h3>📜 练习记录</h3>
-                    <div v-if="practiceHistory.length === 0" class="empty-state">
-                        <p>暂无练习记录</p>
-                    </div>
-                    <div v-else class="history-list">
-                        <div v-for="(record, index) in practiceHistory" :key="index" class="history-item">
-                            <span class="history-date">{{record.date}}</span>
-                            <span class="history-detail">{{record.type}} - {{record.correct}}/{{record.total}} 题</span>
-                            <span class="history-time">用时 {{record.time}}秒</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <button class="export-btn" onclick="exportData()">
-                    📤 导出数据
-                </button>
-            </div>
+            <div class="parent-content"></div>
         </div>
 
+        <!-- 主题商店页面 -->
         <div id="shop" class="page">
             <div class="header">
                 <button class="back-btn" onclick="showPage('home-page')">← 返回</button>
                 <h2>🛒 主题商店</h2>
-                <span class="coins">💰 {{coins}}</span>
+                <span class="coins">💰 0</span>
             </div>
-            
-            <div class="shop-content">
-                <h3>🎨 主题皮肤</h3>
-                <div class="theme-list">
-                    <div v-for="theme in themes" :key="theme.id" class="theme-item">
-                        <div class="theme-preview" :style="{background: theme.color}">
-                            <span>{{theme.icon}}</span>
-                        </div>
-                        <span class="theme-name">{{theme.name}}</span>
-                        <button 
-                            class="buy-btn"
-                            :class="{purchased: theme.purchased, selected: theme.selected}"
-                            :disabled="coins < theme.price && !theme.purchased"
-                            onclick="buyTheme(theme.id)"
-                        >
-                            {{theme.selected ? '已使用' : (theme.purchased ? '使用' : `💰${theme.price}`)}}
-                        </button>
-                    </div>
-                </div>
-            </div>
+            <div class="shop-content"></div>
         </div>
 
+        <!-- 勋章页面 -->
         <div id="medals" class="page">
             <div class="header">
                 <button class="back-btn" onclick="showPage('home-page')">← 返回</button>
                 <h2>🏅 我的勋章</h2>
             </div>
-            
-            <div class="medals-content">
-                <div class="medals-grid">
-                    <div v-for="medal in medals" :key="medal.id" class="medal-item" :class="{unlocked: medal.unlocked}">
-                        <span class="medal-icon">{{medal.unlocked ? medal.icon : '🔒'}}</span>
-                        <span class="medal-name">{{medal.name}}</span>
-                        <span class="medal-desc">{{medal.description}}</span>
-                    </div>
-                </div>
-            </div>
+            <div class="medals-content"></div>
         </div>
     </div>
 
@@ -376,6 +224,7 @@
     <script src="js/utils.js"></script>
     <script src="js/modules/oral.js"></script>
     <script src="js/modules/fill.js"></script>
+    <script src="js/modules/multi.js"></script>
     <script src="js/modules/challenge.js"></script>
     <script src="js/main.js"></script>
 </body>

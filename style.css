@@ -2,13 +2,15 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
 }
 
 body {
-    font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    font-family: 'PingFang SC', 'Microsoft YaHei', -apple-system, sans-serif;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     min-height: 100vh;
-    padding: 20px;
+    padding: 10px;
+    overflow-x: hidden;
 }
 
 #app {
@@ -20,9 +22,15 @@ body {
     display: none;
     background: #fff;
     border-radius: 20px;
-    padding: 20px;
-    min-height: calc(100vh - 40px);
+    padding: 15px;
+    min-height: calc(100vh - 20px);
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 .page.active {
@@ -33,38 +41,40 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
-    padding-bottom: 15px;
+    margin-bottom: 15px;
+    padding-bottom: 12px;
     border-bottom: 2px solid #f0f0f0;
 }
 
 .back-btn {
     background: #f5f5f5;
     border: none;
-    padding: 8px 16px;
+    padding: 8px 14px;
     border-radius: 20px;
-    font-size: 16px;
+    font-size: 14px;
     cursor: pointer;
     color: #333;
+    transition: all 0.2s;
 }
 
-.back-btn:hover {
+.back-btn:active {
+    transform: scale(0.95);
     background: #e8e8e8;
 }
 
 .header h2 {
-    font-size: 20px;
+    font-size: 18px;
     color: #333;
 }
 
 .header .coins {
-    font-size: 18px;
+    font-size: 16px;
     font-weight: bold;
     color: #ff9800;
 }
 
 .title {
-    font-size: 28px;
+    font-size: 24px;
     font-weight: bold;
     color: #333;
     text-align: center;
@@ -73,36 +83,36 @@ body {
 
 .user-info {
     position: absolute;
-    top: 40px;
-    right: 30px;
+    top: 30px;
+    right: 25px;
     display: flex;
-    gap: 15px;
+    gap: 10px;
+    font-size: 13px;
 }
 
 .user-info .level {
-    font-size: 14px;
     color: #666;
     background: #f0f0f0;
-    padding: 4px 10px;
-    border-radius: 10px;
+    padding: 3px 8px;
+    border-radius: 8px;
 }
 
 .main-menu {
     display: flex;
     flex-direction: column;
-    gap: 15px;
-    margin-bottom: 25px;
+    gap: 12px;
+    margin-bottom: 20px;
 }
 
 .menu-btn {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 15px;
-    padding: 20px;
+    gap: 12px;
+    padding: 18px;
     border: none;
     border-radius: 15px;
-    font-size: 20px;
+    font-size: 18px;
     font-weight: bold;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -123,36 +133,35 @@ body {
     color: #8b4513;
 }
 
-.menu-btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+.menu-btn:active {
+    transform: scale(0.98);
 }
 
 .btn-icon {
-    font-size: 28px;
+    font-size: 24px;
 }
 
 .btn-text {
-    font-size: 20px;
+    font-size: 18px;
 }
 
 .daily-tasks {
     background: #fff8e1;
-    border-radius: 15px;
-    padding: 15px;
-    margin-bottom: 20px;
+    border-radius: 12px;
+    padding: 12px;
+    margin-bottom: 15px;
 }
 
 .daily-tasks h3 {
-    font-size: 18px;
+    font-size: 16px;
     color: #ff9800;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
 }
 
 .tasks-list {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
 }
 
 .task {
@@ -160,81 +169,81 @@ body {
     align-items: center;
     justify-content: space-between;
     background: #fff;
-    padding: 12px 15px;
-    border-radius: 10px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-size: 13px;
 }
 
 .task-icon {
-    font-size: 20px;
+    font-size: 18px;
 }
 
 .task-text {
     flex: 1;
-    margin-left: 10px;
-    font-size: 14px;
+    margin-left: 8px;
     color: #333;
 }
 
 .task-progress {
-    font-size: 14px;
     color: #666;
-    margin-right: 10px;
+    margin-right: 8px;
 }
 
 .task-reward {
-    font-size: 14px;
     color: #ff9800;
     font-weight: bold;
 }
 
 .quick-actions {
     display: flex;
-    gap: 10px;
+    gap: 8px;
 }
 
 .action-btn {
     flex: 1;
-    padding: 15px 10px;
+    padding: 12px 8px;
     border: none;
     border-radius: 10px;
     background: #f5f5f5;
-    font-size: 14px;
+    font-size: 13px;
     cursor: pointer;
     color: #333;
+    transition: all 0.2s;
 }
 
-.action-btn:hover {
+.action-btn:active {
     background: #e8e8e8;
+    transform: scale(0.98);
 }
 
 .practice-config {
-    padding: 10px;
+    padding: 8px;
 }
 
 .section {
-    margin-bottom: 20px;
+    margin-bottom: 18px;
 }
 
 .section h3 {
-    font-size: 16px;
+    font-size: 15px;
     color: #666;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
 }
 
 .options {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: 8px;
 }
 
 .option-btn {
-    padding: 12px 20px;
+    padding: 10px 16px;
     border: 2px solid #e0e0e0;
-    border-radius: 12px;
+    border-radius: 10px;
     background: #fff;
     font-size: 14px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.2s;
 }
 
 .option-btn.active {
@@ -243,13 +252,13 @@ body {
     color: #667eea;
 }
 
-.option-btn:hover {
-    border-color: #667eea;
+.option-btn:active {
+    transform: scale(0.95);
 }
 
 .start-btn {
     width: 100%;
-    padding: 20px;
+    padding: 18px;
     border: none;
     border-radius: 15px;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -257,50 +266,50 @@ body {
     font-size: 18px;
     font-weight: bold;
     cursor: pointer;
-    margin-top: 20px;
+    margin-top: 15px;
+    transition: all 0.2s;
 }
 
-.start-btn:hover {
-    opacity: 0.9;
+.start-btn:active {
+    transform: scale(0.98);
 }
 
 .challenge-groups {
-    padding: 10px;
+    padding: 8px;
 }
 
 .challenge-group {
-    margin-bottom: 25px;
+    margin-bottom: 20px;
 }
 
 .challenge-group h3 {
-    font-size: 18px;
+    font-size: 16px;
     color: #333;
-    margin-bottom: 15px;
-    padding-left: 10px;
+    margin-bottom: 12px;
+    padding-left: 8px;
     border-left: 4px solid #667eea;
 }
 
 .levels {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: 8px;
 }
 
 .level-btn {
-    width: 60px;
-    height: 60px;
-    border-radius: 15px;
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
     border: 2px solid #e0e0e0;
     background: #fff;
     font-size: 18px;
     font-weight: bold;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.2s;
 }
 
-.level-btn:hover:not(.locked) {
-    border-color: #667eea;
-    background: #f0f4ff;
+.level-btn:active:not(.locked) {
+    transform: scale(0.95);
 }
 
 .level-btn.locked {
@@ -319,44 +328,50 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 200px;
-    padding: 30px;
+    min-height: 150px;
+    padding: 20px;
 }
 
 .question {
     text-align: center;
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from { opacity: 0; transform: translateX(20px); }
+    to { opacity: 1; transform: translateX(0); }
 }
 
 .oral-question {
     display: flex;
     align-items: center;
-    gap: 15px;
-    font-size: 36px;
+    gap: 10px;
+    font-size: 28px;
 }
 
 .number {
-    font-size: 48px;
+    font-size: 40px;
     font-weight: bold;
     color: #333;
 }
 
 .operator {
-    font-size: 36px;
+    font-size: 32px;
     color: #667eea;
 }
 
 .equals {
-    font-size: 36px;
+    font-size: 32px;
     color: #333;
 }
 
 .answer-input {
-    width: 120px;
-    height: 60px;
-    font-size: 36px;
+    width: 100px;
+    height: 50px;
+    font-size: 32px;
     text-align: center;
     border: 3px solid #e0e0e0;
-    border-radius: 12px;
+    border-radius: 10px;
     outline: none;
 }
 
@@ -364,22 +379,72 @@ body {
     border-color: #667eea;
 }
 
-.fill-question {
-    font-size: 24px;
+.fill-question, .multi-question {
+    font-size: 28px;
     color: #333;
-    margin-bottom: 20px;
+    font-weight: bold;
 }
 
-.fill-content {
+.fill-content, .multi-content {
     margin-bottom: 15px;
+}
+
+/* 数字键盘 */
+.answer-keypad {
+    padding: 10px;
+    margin-top: 20px;
+}
+
+.keypad-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.keypad-btn {
+    flex: 1;
+    height: 55px;
+    border: none;
+    border-radius: 12px;
+    background: #f5f5f5;
+    font-size: 22px;
+    font-weight: bold;
+    color: #333;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.keypad-btn:active {
+    transform: scale(0.95);
+    background: #e0e0e0;
+}
+
+.keypad-btn.clear-btn {
+    background: #ffebee;
+    color: #f44336;
+}
+
+.keypad-btn.submit-btn {
+    background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+    color: #fff;
+}
+
+/* 当前答案显示 */
+.current-answer {
+    text-align: center;
+    font-size: 48px;
+    font-weight: bold;
+    color: #667eea;
+    min-height: 60px;
+    margin-bottom: 10px;
 }
 
 .feedback {
     text-align: center;
-    padding: 15px;
-    margin-bottom: 20px;
+    padding: 12px;
+    margin: 10px 0;
     border-radius: 10px;
-    font-size: 18px;
+    font-size: 16px;
     font-weight: bold;
     opacity: 0;
     transition: opacity 0.3s ease;
@@ -392,54 +457,57 @@ body {
 .feedback.correct {
     background: #d4edda;
     color: #155724;
+    animation: bounce 0.5s ease;
 }
 
 .feedback.wrong {
     background: #f8d7da;
     color: #721c24;
+    animation: shake 0.5s ease;
 }
 
-.submit-btn {
-    width: 100%;
-    padding: 20px;
-    border: none;
-    border-radius: 15px;
-    background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
-    color: #fff;
-    font-size: 18px;
-    font-weight: bold;
-    cursor: pointer;
+@keyframes bounce {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
 }
 
-.submit-btn:hover {
-    opacity: 0.9;
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
 }
 
 .progress {
-    font-size: 18px;
+    font-size: 16px;
     color: #666;
+}
+
+.timer {
+    font-size: 14px;
+    color: #999;
 }
 
 .result-content {
     text-align: center;
-    padding: 30px 20px;
+    padding: 25px 15px;
 }
 
 .result-icon {
-    font-size: 80px;
-    margin-bottom: 20px;
+    font-size: 70px;
+    margin-bottom: 15px;
+    animation: bounce 0.6s ease infinite;
 }
 
 .result-content h2 {
-    font-size: 24px;
+    font-size: 22px;
     color: #333;
-    margin-bottom: 30px;
+    margin-bottom: 25px;
 }
 
 .stats {
     display: flex;
     justify-content: space-around;
-    margin-bottom: 30px;
+    margin-bottom: 25px;
 }
 
 .stat-item {
@@ -448,79 +516,81 @@ body {
 
 .stat-value {
     display: block;
-    font-size: 32px;
+    font-size: 28px;
     font-weight: bold;
     color: #667eea;
 }
 
 .stat-label {
-    font-size: 14px;
+    font-size: 13px;
     color: #666;
 }
 
 .result-actions {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
 }
 
 .result-btn {
-    padding: 15px;
+    padding: 14px;
     border: none;
     border-radius: 12px;
-    font-size: 16px;
+    font-size: 15px;
     cursor: pointer;
     background: #f5f5f5;
     color: #333;
+    transition: all 0.2s;
 }
 
-.result-btn:hover {
+.result-btn:active {
     background: #e8e8e8;
+    transform: scale(0.98);
 }
 
 .wrong-content {
-    padding: 10px;
+    padding: 8px;
 }
 
 .empty-state {
     text-align: center;
-    padding: 40px 20px;
+    padding: 30px 15px;
 }
 
 .empty-state span {
-    font-size: 60px;
+    font-size: 50px;
     display: block;
-    margin-bottom: 15px;
+    margin-bottom: 12px;
 }
 
 .empty-state p {
-    font-size: 18px;
+    font-size: 16px;
     color: #666;
 }
 
 .wrong-list {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 12px;
 }
 
 .wrong-item {
     background: #fff3e0;
-    padding: 15px;
-    border-radius: 12px;
+    padding: 12px;
+    border-radius: 10px;
 }
 
 .wrong-question {
-    font-size: 20px;
+    font-size: 18px;
     font-weight: bold;
     color: #333;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
 }
 
 .wrong-info {
     display: flex;
-    gap: 20px;
-    font-size: 14px;
+    gap: 15px;
+    font-size: 13px;
 }
 
 .wrong-answer {
@@ -533,74 +603,75 @@ body {
 
 .clear-btn {
     width: 100%;
-    padding: 15px;
+    padding: 12px;
     border: none;
-    border-radius: 12px;
+    border-radius: 10px;
     background: #f8d7da;
     color: #721c24;
-    font-size: 16px;
+    font-size: 15px;
     cursor: pointer;
-    margin-top: 20px;
+    margin-top: 15px;
 }
 
 .parent-content {
-    padding: 10px;
+    padding: 8px;
 }
 
 .stats-section {
-    margin-bottom: 25px;
+    margin-bottom: 20px;
 }
 
 .stats-section h3,
 .history-section h3 {
-    font-size: 18px;
+    font-size: 16px;
     color: #333;
-    margin-bottom: 15px;
+    margin-bottom: 12px;
 }
 
 .stats-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 12px;
+    gap: 10px;
 }
 
 .stat-card {
     background: #f5f5f5;
-    padding: 15px;
-    border-radius: 12px;
+    padding: 12px;
+    border-radius: 10px;
     text-align: center;
 }
 
 .stat-num {
     display: block;
-    font-size: 28px;
+    font-size: 24px;
     font-weight: bold;
     color: #667eea;
 }
 
 .stat-desc {
-    font-size: 14px;
+    font-size: 13px;
     color: #666;
 }
 
 .history-list {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
 }
 
 .history-item {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column;
+    gap: 4px;
     background: #f5f5f5;
-    padding: 12px 15px;
-    border-radius: 10px;
-    font-size: 14px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-size: 13px;
 }
 
 .history-date {
     color: #999;
+    font-size: 12px;
 }
 
 .history-detail {
@@ -609,66 +680,67 @@ body {
 
 .history-time {
     color: #666;
+    font-size: 12px;
 }
 
 .export-btn {
     width: 100%;
-    padding: 15px;
+    padding: 12px;
     border: none;
-    border-radius: 12px;
+    border-radius: 10px;
     background: #667eea;
     color: #fff;
-    font-size: 16px;
+    font-size: 15px;
     cursor: pointer;
-    margin-top: 20px;
+    margin-top: 15px;
 }
 
 .shop-content {
-    padding: 10px;
+    padding: 8px;
 }
 
 .shop-content h3 {
-    font-size: 18px;
+    font-size: 16px;
     color: #333;
-    margin-bottom: 15px;
+    margin-bottom: 12px;
 }
 
 .theme-list {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 15px;
+    gap: 12px;
 }
 
 .theme-item {
     background: #f5f5f5;
-    padding: 15px;
-    border-radius: 12px;
+    padding: 12px;
+    border-radius: 10px;
     text-align: center;
 }
 
 .theme-preview {
-    width: 60px;
-    height: 60px;
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
-    margin: 0 auto 10px;
+    margin: 0 auto 8px;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 28px;
+    font-size: 24px;
 }
 
 .theme-name {
     display: block;
-    font-size: 14px;
+    font-size: 13px;
     color: #333;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
 }
 
 .buy-btn {
-    padding: 8px 16px;
+    padding: 6px 12px;
     border: none;
-    border-radius: 20px;
-    font-size: 14px;
+    border-radius: 15px;
+    font-size: 13px;
     cursor: pointer;
 }
 
@@ -693,19 +765,19 @@ body {
 }
 
 .medals-content {
-    padding: 10px;
+    padding: 8px;
 }
 
 .medals-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 15px;
+    gap: 12px;
 }
 
 .medal-item {
     background: #f5f5f5;
-    padding: 20px;
-    border-radius: 15px;
+    padding: 15px;
+    border-radius: 12px;
     text-align: center;
     opacity: 0.5;
 }
@@ -716,46 +788,65 @@ body {
 }
 
 .medal-icon {
-    font-size: 40px;
+    font-size: 35px;
     display: block;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
 }
 
 .medal-name {
     display: block;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: bold;
     color: #333;
-    margin-bottom: 5px;
+    margin-bottom: 4px;
 }
 
 .medal-desc {
-    font-size: 12px;
+    font-size: 11px;
     color: #666;
 }
 
-@media (max-width: 480px) {
+/* 移动端适配 */
+@media (max-width: 400px) {
     body {
-        padding: 10px;
+        padding: 5px;
     }
     
     .page {
-        min-height: calc(100vh - 20px);
+        min-height: calc(100vh - 10px);
         border-radius: 15px;
+        padding: 12px;
     }
     
     .oral-question {
-        font-size: 28px;
-        gap: 10px;
+        font-size: 24px;
+        gap: 8px;
     }
     
     .number {
-        font-size: 36px;
+        font-size: 32px;
     }
     
     .answer-input {
-        width: 100px;
+        width: 80px;
+        height: 45px;
+        font-size: 26px;
+    }
+    
+    .keypad-btn {
         height: 50px;
-        font-size: 28px;
+        font-size: 20px;
+    }
+}
+
+/* 横屏适配 */
+@media (max-height: 500px) {
+    .question-area {
+        min-height: 100px;
+        padding: 10px;
+    }
+    
+    .keypad-btn {
+        height: 45px;
     }
 }

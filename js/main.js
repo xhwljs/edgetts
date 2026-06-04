@@ -1,3 +1,4 @@
+// 全局变量
 let currentQuestions = [];
 let currentIndex = 0;
 let currentQuestion = null;
@@ -10,13 +11,16 @@ let practiceType = '';
 let selectedType = 'oral';
 let selectedLevel = 1;
 let selectedOp = 'add';
+let selectedCount = 10;
 let isChallengeMode = false;
 let challengeGroupId = 0;
 let challengeLevelId = 0;
+let timerInterval = null;
 
-const CORRECT_MESSAGES = ['太棒了！', '正确！', '真聪明！', '答对了！', '做得好！'];
-const WRONG_MESSAGES = ['再想想！', '不对哦！', '加油！', '继续努力！'];
+const CORRECT_MESSAGES = ['太棒了！', '正确！', '真聪明！', '答对了！', '做得好！', '真厉害！'];
+const WRONG_MESSAGES = ['再想想！', '不对哦！', '加油！', '继续努力！', '别灰心！'];
 
+// 页面切换
 function showPage(pageId) {
     document.querySelectorAll('.page').forEach(page => {
         page.classList.remove('active');
@@ -36,77 +40,139 @@ function showPage(pageId) {
     }
 }
 
+// 加载首页
 function loadHomePage() {
     const user = Storage.getUserData();
-    document.querySelector('.user-info .coins').textContent = `💰 ${user.coins}`;
-    document.querySelector('.user-info .level').textContent = `等级 ${user.level}`;
+    const coinsEl = document.querySelector('.user-info .coins');
+    const levelEl = document.querySelector('.user-info .level');
+    if (coinsEl) coinsEl.textContent = `💰 ${user.coins}`;
+    if (levelEl) levelEl.textContent = `等级 ${user.level}`;
     
     const tasks = Storage.getDailyTasks();
     const tasksContainer = document.querySelector('.tasks-list');
-    tasksContainer.innerHTML = tasks.map(task => `
-        <div class="task">
-            <span class="task-icon">${task.icon}</span>
-            <span class="task-text">${task.name}</span>
-            <span class="task-progress">${task.progress}/${task.target}</span>
-            <span class="task-reward">${task.completed ? '✓' : `+${task.reward}💰`}</span>
-        </div>
-    `).join('');
+    if (tasksContainer) {
+        tasksContainer.innerHTML = tasks.map(task => `
+            <div class="task">
+                <span class="task-icon">${task.icon}</span>
+                <span class="task-text">${task.name}</span>
+                <span class="task-progress">${task.progress}/${task.target}</span>
+                <span class="task-reward">${task.completed ? '✓' : `+${task.reward}💰`}</span>
+            </div>
+        `).join('');
+    }
 }
 
+// 选择题型
 function selectType(type) {
     selectedType = type;
-    updateOptionButtons('oral', 'fill', type);
+    updateOptionButtons('type-options', type);
 }
 
+// 选择难度
 function selectLevel(level) {
     selectedLevel = level;
-    updateOptionButtons(1, 4, level);
+    updateOptionButtons('level-options', level);
+    updateOptionButtons('random-level-options', level);
 }
 
+// 选择运算类型
 function selectOp(op) {
     selectedOp = op;
-    updateOptionButtons('add', 'sub', 'mix', op);
+    updateOptionButtons('op-options', op);
 }
 
-function updateOptionButtons(...values) {
-    const activeValue = values.pop();
-    values.forEach(val => {
-        const btn = document.querySelector(`button.option-btn:contains("${val === 1 ? '0-10' : val === 2 ? '0-20' : val === 3 ? '0-50' : val === 4 ? '0-100' : val === 'add' ? '加法' : val === 'sub' ? '减法' : val === 'mix' ? '混合' : val === 'oral' ? '口算题' : '填空题'}")`);
-        if (btn) {
-            btn.classList.toggle('active', btn.textContent.includes(activeValue === 1 ? '0-10' : activeValue === 2 ? '0-20' : activeValue === 3 ? '0-50' : activeValue === 4 ? '0-100' : activeValue === 'add' ? '加法' : activeValue === 'sub' ? '减法' : activeValue === 'mix' ? '混合' : activeValue === 'oral' ? '口算题' : '填空题'));
+// 选择题目数量
+function selectCount(count) {
+    selectedCount = count;
+    updateOptionButtons('count-options', count);
+    updateOptionButtons('random-count-options', count);
+}
+
+// 更新选项按钮状态
+function updateOptionButtons(containerId, value) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    
+    const buttons = container.querySelectorAll('.option-btn');
+    buttons.forEach(btn => {
+        btn.classList.remove('active');
+        const text = btn.textContent.trim();
+        
+        // 根据不同的值类型进行匹配
+        let match = false;
+        if (typeof value === 'number') {
+            if (text.includes(`${value}`) || text.includes(`0-${value}`)) {
+                match = true;
+            }
+        } else {
+            if (text.includes(value) || 
+                (value === 'oral' && text.includes('口算')) ||
+                (value === 'fill' && text.includes('填空')) ||
+                (value === 'multi' && text.includes('连加')) ||
+                (value === 'add' && text.includes('加法') && !text.includes('连')) ||
+                (value === 'sub' && text.includes('减法') && !text.includes('连')) ||
+                (value === 'mix' && text.includes('混合'))) {
+                match = true;
+            }
+        }
+        
+        if (match) {
+            btn.classList.add('active');
         }
     });
 }
 
+// 开始自定义练习
 function startPractice() {
     isChallengeMode = false;
-    practiceType = selectedType === 'oral' ? '口算练习' : '填空练习';
     
-    const count = 10;
-    currentQuestions = selectedType === 'oral' 
-        ? OralModule.generateQuestions(count, selectedLevel, selectedOp)
-        : FillModule.generateQuestions(count, selectedLevel, selectedOp);
+    const typeNames = {
+        'oral': '口算练习',
+        'fill': '填空练习',
+        'multi': '连加连减'
+    };
+    practiceType = typeNames[selectedType] || '口算练习';
     
+    let questions = [];
+    switch (selectedType) {
+        case 'oral':
+            questions = OralModule.generateQuestions(selectedCount, selectedLevel, selectedOp);
+            break;
+        case 'fill':
+            questions = FillModule.generateQuestions(selectedCount, selectedLevel, selectedOp);
+            break;
+        case 'multi':
+            questions = MultiModule.generateQuestions(selectedCount, selectedLevel, selectedOp);
+            break;
+    }
+    
+    currentQuestions = questions;
     startPracticeSession();
 }
 
+// 开始随机练习
 function startRandomPractice() {
     isChallengeMode = false;
     practiceType = '随机混合练习';
     
-    const count = 10;
     const questions = [];
+    const perType = Math.ceil(selectedCount / 4);
     
+    // 确保每种题型至少出一道
     questions.push(OralModule.generateQuestion(selectedLevel, 'add'));
     questions.push(OralModule.generateQuestion(selectedLevel, 'sub'));
     questions.push(FillModule.generateQuestion(selectedLevel, 'add'));
     questions.push(FillModule.generateQuestion(selectedLevel, 'sub'));
     
-    for (let i = 4; i < count; i++) {
-        if (Math.random() > 0.5) {
+    // 填充剩余题目
+    for (let i = 4; i < selectedCount; i++) {
+        const rand = Math.random();
+        if (rand < 0.33) {
             questions.push(OralModule.generateQuestion(selectedLevel, 'mix'));
-        } else {
+        } else if (rand < 0.66) {
             questions.push(FillModule.generateQuestion(selectedLevel, 'mix'));
+        } else {
+            questions.push(MultiModule.generateQuestion(selectedLevel, 'mix'));
         }
     }
     
@@ -114,6 +180,7 @@ function startRandomPractice() {
     startPracticeSession();
 }
 
+// 开始挑战模式
 function startChallenge(groupId, levelId) {
     isChallengeMode = true;
     challengeGroupId = groupId;
@@ -124,17 +191,35 @@ function startChallenge(groupId, levelId) {
     startPracticeSession();
 }
 
+// 开始练习会话
 function startPracticeSession() {
     currentIndex = 0;
     correctCount = 0;
     wrongCount = 0;
     totalTime = 0;
     startTime = Date.now();
+    userAnswer = '';
+    
+    // 启动计时器
+    if (timerInterval) clearInterval(timerInterval);
+    timerInterval = setInterval(updateTimer, 1000);
     
     showPage('practice-page');
     loadCurrentQuestion();
 }
 
+// 更新计时器显示
+function updateTimer() {
+    const elapsed = Math.floor((Date.now() - startTime) / 1000);
+    const mins = Math.floor(elapsed / 60);
+    const secs = elapsed % 60;
+    const timerEl = document.getElementById('timer-display');
+    if (timerEl) {
+        timerEl.textContent = `${mins}:${String(secs).padStart(2, '0')}`;
+    }
+}
+
+// 加载当前题目
 function loadCurrentQuestion() {
     if (currentIndex >= currentQuestions.length) {
         finishPractice();
@@ -147,8 +232,11 @@ function loadCurrentQuestion() {
     const questionArea = document.querySelector('.question-area');
     const progress = document.querySelector('.progress span');
     
-    progress.textContent = `${currentIndex + 1}/${currentQuestions.length}`;
+    if (progress) {
+        progress.textContent = `${currentIndex + 1}/${currentQuestions.length}`;
+    }
     
+    // 根据题型渲染不同的题目格式
     if (currentQuestion.type === 'oral') {
         questionArea.innerHTML = `
             <div class="question">
@@ -157,34 +245,57 @@ function loadCurrentQuestion() {
                     <span class="operator">${currentQuestion.op}</span>
                     <span class="number">${currentQuestion.num2}</span>
                     <span class="equals">=</span>
-                    <input type="number" class="answer-input" id="answer-input" placeholder="?" />
+                    <span class="number placeholder">?</span>
                 </div>
+                <div class="current-answer" id="current-answer">${userAnswer || ''}</div>
             </div>
         `;
-    } else {
+    } else if (currentQuestion.type === 'fill') {
         questionArea.innerHTML = `
             <div class="question">
                 <div class="fill-question">
-                    <div class="fill-content">${currentQuestion.content}</div>
-                    <input type="number" class="answer-input" id="answer-input" placeholder="?" />
+                    <div class="fill-content">${currentQuestion.content.replace('___', '<span class="placeholder">?</span>')}</div>
                 </div>
+                <div class="current-answer" id="current-answer">${userAnswer || ''}</div>
+            </div>
+        `;
+    } else if (currentQuestion.type === 'multi') {
+        questionArea.innerHTML = `
+            <div class="question">
+                <div class="multi-question">
+                    <div class="multi-content">${currentQuestion.content.replace('?', '<span class="placeholder">?</span>')}</div>
+                </div>
+                <div class="current-answer" id="current-answer">${userAnswer || ''}</div>
             </div>
         `;
     }
-    
-    document.getElementById('answer-input').focus();
-    document.getElementById('answer-input').addEventListener('keyup', (e) => {
-        if (e.key === 'Enter') {
-            submitAnswer();
-        }
-    });
 }
 
+// 数字键盘输入
+function inputNumber(num) {
+    if (userAnswer.length < 4) {
+        userAnswer += num;
+        const answerEl = document.getElementById('current-answer');
+        if (answerEl) answerEl.textContent = userAnswer;
+    }
+}
+
+// 清除输入
+function clearInput() {
+    userAnswer = '';
+    const answerEl = document.getElementById('current-answer');
+    if (answerEl) answerEl.textContent = '';
+}
+
+// 提交答案
 function submitAnswer() {
-    const input = document.getElementById('answer-input');
-    userAnswer = parseInt(input.value) || 0;
+    if (!userAnswer) {
+        showFeedback('wrong', '请输入答案！');
+        return;
+    }
     
-    const isCorrect = userAnswer === currentQuestion.answer;
+    const answerNum = parseInt(userAnswer);
+    const isCorrect = answerNum === currentQuestion.answer;
     
     if (isCorrect) {
         correctCount++;
@@ -195,12 +306,15 @@ function submitAnswer() {
         showFeedback('wrong', `${WRONG_MESSAGES[Math.floor(Math.random() * WRONG_MESSAGES.length)]} 正确答案是 ${currentQuestion.answer}`);
         Utils.playSound('wrong');
         
+        // 保存错题
         Storage.addWrongQuestion({
             num1: currentQuestion.num1,
             num2: currentQuestion.num2,
             op: currentQuestion.op,
-            userAnswer: userAnswer,
+            userAnswer: answerNum,
             correctAnswer: currentQuestion.answer,
+            type: currentQuestion.type,
+            content: currentQuestion.content || `${currentQuestion.num1} ${currentQuestion.op} ${currentQuestion.num2}`,
             timestamp: Date.now()
         });
     }
@@ -208,20 +322,34 @@ function submitAnswer() {
     setTimeout(() => {
         currentIndex++;
         loadCurrentQuestion();
-    }, 1500);
+    }, 1200);
 }
 
+// 显示反馈
 function showFeedback(type, message) {
     const feedback = document.querySelector('.feedback');
-    feedback.textContent = message;
-    feedback.className = `feedback ${type} show`;
-    
-    setTimeout(() => {
-        feedback.classList.remove('show');
-    }, 1500);
+    if (feedback) {
+        feedback.textContent = message;
+        feedback.className = `feedback ${type} show`;
+        
+        setTimeout(() => {
+            feedback.classList.remove('show');
+        }, 1200);
+    }
 }
 
+// 确认退出
+function confirmExit() {
+    if (confirm('确定要退出练习吗？当前进度将不会保存。')) {
+        if (timerInterval) clearInterval(timerInterval);
+        showPage('home-page');
+    }
+}
+
+// 完成练习
 function finishPractice() {
+    if (timerInterval) clearInterval(timerInterval);
+    
     totalTime = Math.floor((Date.now() - startTime) / 1000);
     
     const user = Storage.getUserData();
@@ -260,6 +388,7 @@ function finishPractice() {
     showResult(correctCount, wrongCount, totalTime, earnedCoins);
 }
 
+// 完成挑战关卡
 function completeChallenge() {
     const progress = Storage.getChallengeProgress();
     const group = progress.groups.find(g => g.id === challengeGroupId);
@@ -270,61 +399,65 @@ function completeChallenge() {
             level.completed = true;
         }
         
+        // 解锁下一关
         const nextLevel = group.levels.find(l => l.id === challengeLevelId + 1);
         if (nextLevel) {
-            nextLevel.completed = false;
+            nextLevel.unlocked = true;
+        }
+        
+        // 如果当前组全部完成，解锁下一组的第一关
+        const allCompleted = group.levels.every(l => l.completed);
+        if (allCompleted && challengeGroupId < 4) {
+            const nextGroup = progress.groups.find(g => g.id === challengeGroupId + 1);
+            if (nextGroup && nextGroup.levels[0]) {
+                nextGroup.levels[0].unlocked = true;
+            }
         }
     }
     
     Storage.saveChallengeProgress(progress);
 }
 
+// 更新勋章
 function updateMedals() {
     const medals = Storage.getMedalsData();
     const user = Storage.getUserData();
     
-    if (user.practiceCount === 1) {
-        medals[0].unlocked = true;
-    }
-    if (user.totalCorrect >= 100) {
-        medals[1].unlocked = true;
-    }
-    if (user.totalCorrect >= 500) {
-        medals[2].unlocked = true;
-    }
-    if (correctCount === currentQuestions.length) {
+    if (user.practiceCount >= 1) medals[0].unlocked = true;
+    if (user.totalCorrect >= 100) medals[1].unlocked = true;
+    if (user.totalCorrect >= 500) medals[2].unlocked = true;
+    if (correctCount === currentQuestions.length && currentQuestions.length >= 10) {
         medals[4].unlocked = true;
     }
     
     const allCompleted = Storage.getChallengeProgress().groups.every(group => 
         group.levels.every(level => level.completed)
     );
-    if (allCompleted) {
-        medals[5].unlocked = true;
-    }
+    if (allCompleted) medals[5].unlocked = true;
     
     Storage.saveMedalsData(medals);
 }
 
+// 显示结果页面
 function showResult(correct, wrong, time, coins) {
     const resultPage = document.getElementById('result-page');
-    
     const isPerfect = correct === currentQuestions.length;
+    const accuracy = Math.round((correct / currentQuestions.length) * 100);
     
     resultPage.innerHTML = `
         <div class="header">
             <button class="back-btn" onclick="showPage('home-page')">← 返回首页</button>
         </div>
         <div class="result-content">
-            <div class="result-icon">${isPerfect ? '🎉' : '👍'}</div>
-            <h2>${isPerfect ? '太棒了！全对！' : '练习完成！'}</h2>
+            <div class="result-icon">${isPerfect ? '🎉' : (accuracy >= 80 ? '👍' : '💪')}</div>
+            <h2>${isPerfect ? '太棒了！全对！' : (accuracy >= 80 ? '做得很好！' : '继续加油！')}</h2>
             <div class="stats">
                 <div class="stat-item">
-                    <span class="stat-value">${correct}</span>
-                    <span class="stat-label">答对题数</span>
+                    <span class="stat-value">${correct}/${currentQuestions.length}</span>
+                    <span class="stat-label">正确率 ${accuracy}%</span>
                 </div>
                 <div class="stat-item">
-                    <span class="stat-value">${time}秒</span>
+                    <span class="stat-value">${formatTime(time)}</span>
                     <span class="stat-label">用时</span>
                 </div>
                 <div class="stat-item">
@@ -343,6 +476,15 @@ function showResult(correct, wrong, time, coins) {
     showPage('result-page');
 }
 
+// 格式化时间
+function formatTime(seconds) {
+    if (seconds < 60) return `${seconds}秒`;
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}分${secs}秒`;
+}
+
+// 重新练习
 function restartPractice() {
     if (isChallengeMode) {
         startChallenge(challengeGroupId, challengeLevelId);
@@ -351,9 +493,12 @@ function restartPractice() {
     }
 }
 
+// 加载错题本
 function loadWrongList() {
     const wrongList = Storage.getWrongQuestions();
     const container = document.querySelector('.wrong-content');
+    
+    if (!container) return;
     
     if (wrongList.length === 0) {
         container.innerHTML = `
@@ -368,7 +513,7 @@ function loadWrongList() {
                 ${wrongList.map((item, index) => `
                     <div class="wrong-item">
                         <div class="wrong-question">
-                            <span>${item.num1} ${item.op} ${item.num2} = ?</span>
+                            <span>${item.content || `${item.num1} ${item.op} ${item.num2} = ?`}</span>
                         </div>
                         <div class="wrong-info">
                             <span class="wrong-answer">你的答案: ${item.userAnswer}</span>
@@ -384,6 +529,7 @@ function loadWrongList() {
     Storage.updateDailyTask(4, 1);
 }
 
+// 清空错题本
 function clearWrongList() {
     if (confirm('确定要清空错题本吗？')) {
         Storage.clearWrongQuestions();
@@ -391,6 +537,7 @@ function clearWrongList() {
     }
 }
 
+// 加载家长模式
 function loadParentMode() {
     const user = Storage.getUserData();
     const history = Storage.getPracticeHistory();
@@ -400,6 +547,8 @@ function loadParentMode() {
         : 0;
     
     const container = document.querySelector('.parent-content');
+    if (!container) return;
+    
     container.innerHTML = `
         <div class="stats-section">
             <h3>📊 学习统计</h3>
@@ -434,33 +583,40 @@ function loadParentMode() {
                         <div class="history-item">
                             <span class="history-date">${Utils.formatDate(record.date)}</span>
                             <span class="history-detail">${record.type} - ${record.correct}/${record.total}题</span>
-                            <span class="history-time">用时 ${record.time}秒</span>
+                            <span class="history-time">用时 ${formatTime(record.time)}</span>
                         </div>
                     `).join('')}
                 </div>
             `}
         </div>
         <button class="export-btn" onclick="exportData()">📤 导出数据</button>
+        <button class="export-btn" onclick="importData()" style="background: #4caf50; margin-top: 10px;">📥 导入数据</button>
     `;
 }
 
+// 导出数据
 function exportData() {
     const user = Storage.getUserData();
     const history = Storage.getPracticeHistory();
     const wrongList = Storage.getWrongQuestions();
+    const medals = Storage.getMedalsData();
+    const challenge = Storage.getChallengeProgress();
     
     const data = {
         user,
         history,
         wrongList,
-        exportDate: new Date().toISOString()
+        medals,
+        challenge,
+        exportDate: new Date().toISOString(),
+        version: '1.0'
     };
     
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `math_land_data_${new Date().getTime()}.json`;
+    a.download = `数学乐园_${new Date().toLocaleDateString('zh-CN').replace(/\//g, '-')}.json`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -469,11 +625,47 @@ function exportData() {
     alert('数据导出成功！');
 }
 
+// 导入数据
+function importData() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json';
+    
+    input.onchange = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            try {
+                const data = JSON.parse(event.target.result);
+                
+                if (data.user) Storage.saveUserData(data.user);
+                if (data.history) localStorage.setItem('math_land_practice_history', JSON.stringify(data.history));
+                if (data.wrongList) Storage.saveWrongQuestions(data.wrongList);
+                if (data.medals) Storage.saveMedalsData(data.medals);
+                if (data.challenge) Storage.saveChallengeProgress(data.challenge);
+                
+                alert('数据导入成功！');
+                loadParentMode();
+            } catch (err) {
+                alert('数据导入失败，请检查文件格式！');
+            }
+        };
+        reader.readAsText(file);
+    };
+    
+    input.click();
+}
+
+// 加载主题商店
 function loadShop() {
     const themes = Storage.getThemeData();
     const user = Storage.getUserData();
     
     const container = document.querySelector('.shop-content');
+    if (!container) return;
+    
     container.innerHTML = `
         <h3>🎨 主题皮肤</h3>
         <div class="theme-list">
@@ -495,16 +687,17 @@ function loadShop() {
         </div>
     `;
     
-    document.querySelector('.header .coins').textContent = `💰 ${user.coins}`;
+    const headerCoins = document.querySelector('#shop .header .coins');
+    if (headerCoins) headerCoins.textContent = `💰 ${user.coins}`;
 }
 
+// 购买主题
 function buyTheme(themeId) {
     const themes = Storage.getThemeData();
     const user = Storage.getUserData();
     const theme = themes.find(t => t.id === themeId);
     
     if (!theme) return;
-    
     if (theme.selected) return;
     
     if (!theme.purchased) {
@@ -526,11 +719,14 @@ function buyTheme(themeId) {
     loadShop();
 }
 
+// 加载挑战模式
 function loadChallenge() {
     const progress = Storage.getChallengeProgress();
     const groups = ChallengeModule.getGroups();
     
     const container = document.querySelector('.challenge-groups');
+    if (!container) return;
+    
     container.innerHTML = groups.map(group => {
         const groupProgress = progress.groups.find(g => g.id === group.id);
         return `
@@ -540,7 +736,8 @@ function loadChallenge() {
                     ${Array.from({ length: group.levels }, (_, i) => {
                         const levelId = i + 1;
                         const levelProgress = groupProgress?.levels.find(l => l.id === levelId);
-                        const unlocked = levelId === 1 || (groupProgress?.levels.find(l => l.id === levelId - 1)?.completed);
+                        const prevLevel = groupProgress?.levels.find(l => l.id === levelId - 1);
+                        const unlocked = levelId === 1 || (groupProgress?.levels[0]?.unlocked && (levelId === 1 || prevLevel?.completed));
                         const completed = levelProgress?.completed;
                         return `
                             <button 
@@ -548,7 +745,7 @@ function loadChallenge() {
                                 ${!unlocked ? 'disabled' : ''}
                                 onclick="startChallenge(${group.id}, ${levelId})"
                             >
-                                ${levelId}
+                                ${completed ? '✓' : levelId}
                             </button>
                         `;
                     }).join('')}
@@ -558,19 +755,33 @@ function loadChallenge() {
     }).join('');
 }
 
+// 初始化
 document.addEventListener('DOMContentLoaded', () => {
+    // 应用已选主题
+    const themes = Storage.getThemeData();
+    const selectedTheme = themes.find(t => t.selected);
+    if (selectedTheme) {
+        document.body.style.background = selectedTheme.color;
+    }
+    
     showPage('home-page');
 });
 
+// 导出到全局
 window.showPage = showPage;
 window.selectType = selectType;
 window.selectLevel = selectLevel;
 window.selectOp = selectOp;
+window.selectCount = selectCount;
 window.startPractice = startPractice;
 window.startRandomPractice = startRandomPractice;
 window.startChallenge = startChallenge;
 window.submitAnswer = submitAnswer;
+window.inputNumber = inputNumber;
+window.clearInput = clearInput;
+window.confirmExit = confirmExit;
 window.restartPractice = restartPractice;
 window.clearWrongList = clearWrongList;
 window.exportData = exportData;
+window.importData = importData;
 window.buyTheme = buyTheme;
