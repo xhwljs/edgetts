@@ -8,7 +8,6 @@
 </head>
 <body>
     <div id="app">
-        <!-- 首页 -->
         <div id="home-page" class="page active">
             <div class="header">
                 <h1 class="title">🧮 数学乐园</h1>
@@ -56,7 +55,6 @@
             </div>
         </div>
 
-        <!-- 自定义练习页面 -->
         <div id="custom-practice" class="page">
             <div class="header">
                 <button class="back-btn" onclick="showPage('home-page')">← 返回</button>
@@ -70,6 +68,7 @@
                         <button class="option-btn active" onclick="selectType('oral')">🗣️ 口算题</button>
                         <button class="option-btn" onclick="selectType('fill')">✏️ 填空题</button>
                         <button class="option-btn" onclick="selectType('multi')">🔢 连加连减</button>
+                        <button class="option-btn" onclick="selectType('compare')">⚖️ 比大小</button>
                     </div>
                 </div>
                 
@@ -106,7 +105,6 @@
             </div>
         </div>
 
-        <!-- 随机练习页面 -->
         <div id="random-practice" class="page">
             <div class="header">
                 <button class="back-btn" onclick="showPage('home-page')">← 返回</button>
@@ -137,7 +135,6 @@
             </div>
         </div>
 
-        <!-- 挑战模式页面 -->
         <div id="challenge" class="page">
             <div class="header">
                 <button class="back-btn" onclick="showPage('home-page')">← 返回</button>
@@ -146,7 +143,6 @@
             <div class="challenge-groups"></div>
         </div>
 
-        <!-- 练习页面 -->
         <div id="practice-page" class="page">
             <div class="header">
                 <button class="back-btn" onclick="confirmExit()">← 退出</button>
@@ -181,12 +177,15 @@
                     <button class="keypad-btn submit-btn" onclick="submitAnswer()">确定</button>
                 </div>
             </div>
+            
+            <div class="compare-buttons" style="display: none;">
+                <button class="compare-btn" onclick="inputCompare('>')">&gt;</button>
+                <button class="compare-btn" onclick="inputCompare('<')">&lt;</button>
+            </div>
         </div>
 
-        <!-- 结果页面 -->
         <div id="result-page" class="page"></div>
 
-        <!-- 错题本页面 -->
         <div id="wrong-list" class="page">
             <div class="header">
                 <button class="back-btn" onclick="showPage('home-page')">← 返回</button>
@@ -195,7 +194,6 @@
             <div class="wrong-content"></div>
         </div>
 
-        <!-- 勋章页面 -->
         <div id="medals" class="page">
             <div class="header">
                 <button class="back-btn" onclick="showPage('home-page')">← 返回</button>
@@ -204,7 +202,6 @@
             <div class="medals-content"></div>
         </div>
 
-        <!-- 成就弹窗 -->
         <div id="achievement-modal" class="modal">
             <div class="modal-content achievement-modal">
                 <div class="achievement-icon">🏆</div>
@@ -215,7 +212,6 @@
             </div>
         </div>
 
-        <!-- 家长模式页面 -->
         <div id="parent-mode" class="page">
             <div class="header">
                 <button class="back-btn" onclick="showPage('home-page')">← 返回</button>
@@ -224,7 +220,6 @@
             <div class="parent-content"></div>
         </div>
 
-        <!-- 主题商店页面 -->
         <div id="shop" class="page">
             <div class="header">
                 <button class="back-btn" onclick="showPage('home-page')">← 返回</button>
@@ -233,15 +228,6 @@
             </div>
             <div class="shop-content"></div>
         </div>
-
-        <!-- 勋章页面 -->
-        <div id="medals" class="page">
-            <div class="header">
-                <button class="back-btn" onclick="showPage('home-page')">← 返回</button>
-                <h2>🏅 我的勋章</h2>
-            </div>
-            <div class="medals-content"></div>
-        </div>
     </div>
 
     <script src="js/storage.js"></script>
@@ -249,6 +235,7 @@
     <script src="js/modules/oral.js"></script>
     <script src="js/modules/fill.js"></script>
     <script src="js/modules/multi.js"></script>
+    <script src="js/modules/compare.js"></script>
     <script src="js/modules/challenge.js"></script>
     <script src="js/main.js"></script>
 </body>

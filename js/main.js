@@ -134,7 +134,8 @@ function startPractice() {
     const typeNames = {
         'oral': '口算练习',
         'fill': '填空练习',
-        'multi': '连加连减'
+        'multi': '连加连减',
+        'compare': '比大小'
     };
     practiceType = typeNames[selectedType] || '口算练习';
     
@@ -148,6 +149,9 @@ function startPractice() {
             break;
         case 'multi':
             questions = MultiModule.generateQuestions(selectedCount, selectedLevel, selectedOp);
+            break;
+        case 'compare':
+            questions = CompareModule.generateCompareQuestions(selectedCount, selectedLevel);
             break;
     }
     
@@ -206,6 +210,10 @@ function startPracticeSession() {
     userAnswer = '';
     consecutiveCorrect = 0;
     maxConsecutive = 0;
+    
+    // 重置键盘显示状态
+    document.querySelector('.answer-keypad').style.display = 'block';
+    document.querySelector('.compare-buttons').style.display = 'none';
     
     // 启动计时器
     if (timerInterval) clearInterval(timerInterval);
@@ -275,6 +283,22 @@ function loadCurrentQuestion() {
                 <div class="current-answer" id="current-answer">${userAnswer || ''}</div>
             </div>
         `;
+    } else if (currentQuestion.type === 'compare') {
+        questionArea.innerHTML = `
+            <div class="question">
+                <div class="compare-question">
+                    <div class="compare-content">${currentQuestion.content.replace('?', '<span class="placeholder">?</span>')}</div>
+                </div>
+                <div class="current-answer" id="current-answer">${userAnswer || ''}</div>
+            </div>
+        `;
+        // 显示比较按钮，隐藏数字键盘
+        document.querySelector('.answer-keypad').style.display = 'none';
+        document.querySelector('.compare-buttons').style.display = 'flex';
+    } else {
+        // 默认显示数字键盘
+        document.querySelector('.answer-keypad').style.display = 'block';
+        document.querySelector('.compare-buttons').style.display = 'none';
     }
 }
 
@@ -292,6 +316,13 @@ function clearInput() {
     userAnswer = '';
     const answerEl = document.getElementById('current-answer');
     if (answerEl) answerEl.textContent = '';
+}
+
+// 比较题型输入
+function inputCompare(op) {
+    userAnswer = op;
+    const answerEl = document.getElementById('current-answer');
+    if (answerEl) answerEl.textContent = op;
 }
 
 // 提交答案
@@ -964,6 +995,7 @@ window.startChallenge = startChallenge;
 window.submitAnswer = submitAnswer;
 window.inputNumber = inputNumber;
 window.clearInput = clearInput;
+window.inputCompare = inputCompare;
 window.confirmExit = confirmExit;
 window.restartPractice = restartPractice;
 window.clearWrongList = clearWrongList;
