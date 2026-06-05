@@ -251,7 +251,7 @@ function loadCurrentQuestion() {
         progress.textContent = `${currentIndex + 1}/${currentQuestions.length}`;
     }
     
-    // 根据题型渲染不同的题目格式
+    // 根据题型渲染不同的题目格式，答案直接在问号位置显示
     if (currentQuestion.type === 'oral') {
         questionArea.innerHTML = `
             <div class="question">
@@ -260,69 +260,79 @@ function loadCurrentQuestion() {
                     <span class="operator">${currentQuestion.op}</span>
                     <span class="number">${currentQuestion.num2}</span>
                     <span class="equals">=</span>
-                    <span class="number placeholder">?</span>
+                    <span class="number answer-placeholder" id="answer-display" onclick="clearInput()">?</span>
                 </div>
-                <div class="current-answer" id="current-answer">${userAnswer || ''}</div>
+                <div class="question-hint">点击答案区域可清除</div>
             </div>
         `;
     } else if (currentQuestion.type === 'fill') {
         questionArea.innerHTML = `
             <div class="question">
                 <div class="fill-question">
-                    <div class="fill-content">${currentQuestion.content.replace('___', '<span class="placeholder">?</span>')}</div>
+                    <div class="fill-content" id="fill-display">${currentQuestion.content.replace('___', '<span class="answer-placeholder" id="answer-display" onclick="clearInput()">?</span>')}</div>
                 </div>
-                <div class="current-answer" id="current-answer">${userAnswer || ''}</div>
+                <div class="question-hint">点击答案区域可清除</div>
             </div>
         `;
     } else if (currentQuestion.type === 'multi') {
         questionArea.innerHTML = `
             <div class="question">
                 <div class="multi-question">
-                    <div class="multi-content">${currentQuestion.content.replace('?', '<span class="placeholder">?</span>')}</div>
+                    <div class="multi-content" id="multi-display">${currentQuestion.content.replace('?', '<span class="answer-placeholder" id="answer-display" onclick="clearInput()">?</span>')}</div>
                 </div>
-                <div class="current-answer" id="current-answer">${userAnswer || ''}</div>
+                <div class="question-hint">点击答案区域可清除</div>
             </div>
         `;
     } else if (currentQuestion.type === 'compare') {
         questionArea.innerHTML = `
             <div class="question">
                 <div class="compare-question">
-                    <div class="compare-content">${currentQuestion.content.replace('?', '<span class="placeholder">?</span>')}</div>
+                    <div class="compare-content" id="compare-display">${currentQuestion.content.replace('?', '<span class="answer-placeholder" id="answer-display">?</span>')}</div>
                 </div>
-                <div class="current-answer" id="current-answer">${userAnswer || ''}</div>
+                <div class="compare-buttons-inline">
+                    <button class="compare-btn" onclick="inputCompare('>')">&gt;</button>
+                    <button class="compare-btn" onclick="inputCompare('<')">&lt;</button>
+                </div>
             </div>
         `;
-        // 显示比较按钮，隐藏数字键盘
         document.querySelector('.answer-keypad').style.display = 'none';
-        document.querySelector('.compare-buttons').style.display = 'flex';
     } else {
         // 默认显示数字键盘
         document.querySelector('.answer-keypad').style.display = 'block';
-        document.querySelector('.compare-buttons').style.display = 'none';
     }
 }
 
-// 数字键盘输入
+// 数字键盘输入 - 答案直接在问号位置显示
 function inputNumber(num) {
     if (userAnswer.length < 4) {
         userAnswer += num;
-        const answerEl = document.getElementById('current-answer');
-        if (answerEl) answerEl.textContent = userAnswer;
+        updateAnswerDisplay();
     }
 }
 
 // 清除输入
 function clearInput() {
     userAnswer = '';
-    const answerEl = document.getElementById('current-answer');
-    if (answerEl) answerEl.textContent = '';
+    updateAnswerDisplay();
+}
+
+// 更新答案显示在问号位置
+function updateAnswerDisplay() {
+    const displayEl = document.getElementById('answer-display');
+    if (displayEl) {
+        displayEl.textContent = userAnswer || '?';
+        if (userAnswer) {
+            displayEl.classList.add('has-answer');
+        } else {
+            displayEl.classList.remove('has-answer');
+        }
+    }
 }
 
 // 比较题型输入
 function inputCompare(op) {
     userAnswer = op;
-    const answerEl = document.getElementById('current-answer');
-    if (answerEl) answerEl.textContent = op;
+    updateAnswerDisplay();
 }
 
 // 提交答案
@@ -996,6 +1006,7 @@ window.submitAnswer = submitAnswer;
 window.inputNumber = inputNumber;
 window.clearInput = clearInput;
 window.inputCompare = inputCompare;
+window.updateAnswerDisplay = updateAnswerDisplay;
 window.confirmExit = confirmExit;
 window.restartPractice = restartPractice;
 window.clearWrongList = clearWrongList;
@@ -1003,3 +1014,33 @@ window.exportData = exportData;
 window.importData = importData;
 window.buyTheme = buyTheme;
 window.closeAchievementModal = closeAchievementModal;
+
+// 键盘快捷键支持
+document.addEventListener('keydown', function(e) {
+    // 只在练习页面生效
+    if (!document.getElementById('practice-page').classList.contains('active')) {
+        return;
+    }
+    
+    // 数字键输入
+    if (e.key >= '0' && e.key <= '9') {
+        inputNumber(parseInt(e.key));
+    }
+    // 清除输入
+    else if (e.key === 'Escape' || e.key === 'Backspace') {
+        clearInput();
+    }
+    // 提交答案
+    else if (e.key === 'Enter') {
+        submitAnswer();
+    }
+    // 比较符号
+    else if (e.key === '>') {
+        inputCompare('>');
+        submitAnswer();
+    }
+    else if (e.key === '<') {
+        inputCompare('<');
+        submitAnswer();
+    }
+});
