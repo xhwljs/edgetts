@@ -67,6 +67,45 @@ function playSound(type) {
             gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.4);
             osc.start(audioContext.currentTime);
             osc.stop(audioContext.currentTime + 0.4);
+        } else if (type === 'streak') {
+            const notes = [659.25, 783.99, 987.77, 1318.51];
+            notes.forEach(function(freq, i) {
+                const osc = audioContext.createOscillator();
+                const gain = audioContext.createGain();
+                osc.connect(gain);
+                gain.connect(audioContext.destination);
+                osc.frequency.setValueAtTime(freq, audioContext.currentTime + i * 0.12);
+                gain.gain.setValueAtTime(0.18, audioContext.currentTime + i * 0.12);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + i * 0.12 + 0.35);
+                osc.start(audioContext.currentTime + i * 0.12);
+                osc.stop(audioContext.currentTime + i * 0.12 + 0.35);
+            });
+        } else if (type === 'complete') {
+            const notes = [523.25, 659.25, 783.99, 1046.50];
+            notes.forEach(function(freq, i) {
+                const osc = audioContext.createOscillator();
+                const gain = audioContext.createGain();
+                osc.connect(gain);
+                gain.connect(audioContext.destination);
+                osc.frequency.setValueAtTime(freq, audioContext.currentTime + i * 0.15);
+                gain.gain.setValueAtTime(0.2, audioContext.currentTime + i * 0.15);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + i * 0.15 + 0.5);
+                osc.start(audioContext.currentTime + i * 0.15);
+                osc.stop(audioContext.currentTime + i * 0.15 + 0.5);
+            });
+        } else if (type === 'checkin') {
+            const notes = [440, 554.37, 659.25, 880];
+            notes.forEach(function(freq, i) {
+                const osc = audioContext.createOscillator();
+                const gain = audioContext.createGain();
+                osc.connect(gain);
+                gain.connect(audioContext.destination);
+                osc.frequency.setValueAtTime(freq, audioContext.currentTime + i * 0.1);
+                gain.gain.setValueAtTime(0.2, audioContext.currentTime + i * 0.1);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + i * 0.1 + 0.3);
+                osc.start(audioContext.currentTime + i * 0.1);
+                osc.stop(audioContext.currentTime + i * 0.1 + 0.3);
+            });
         }
     } catch (e) {
     }

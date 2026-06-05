@@ -55,16 +55,115 @@ function loadHomePage() {
     
     const tasks = Storage.getDailyTasks();
     const tasksContainer = document.querySelector('.tasks-list');
+    
+    // 计算今日目标完成度
+    const completedCount = tasks.filter(t => t.completed).length;
+    const totalCount = tasks.length;
+    const progressPercent = Math.round((completedCount / totalCount) * 100);
+    
     if (tasksContainer) {
-        tasksContainer.innerHTML = tasks.map(task => `
-            <div class="task">
-                <span class="task-icon">${task.icon}</span>
-                <span class="task-text">${task.name}</span>
-                <span class="task-progress">${task.progress}/${task.target}</span>
-                <span class="task-reward">${task.completed ? '✓' : `+${task.reward}💰`}</span>
+        tasksContainer.innerHTML = `
+            <div class="daily-goal-header">
+                <span class="goal-title">🎯 今日目标</span>
+                <span class="goal-progress">${completedCount}/${totalCount}</span>
             </div>
-        `).join('');
+            <div class="goal-bar">
+                <div class="goal-progress-fill" style="width: ${progressPercent}%"></div>
+            </div>
+            ${tasks.map(task => `
+                <div class="task ${task.completed ? 'completed' : ''}">
+                    <span class="task-icon">${task.icon}</span>
+                    <span class="task-text">${task.name}</span>
+                    <span class="task-progress">${task.progress}/${task.target}</span>
+                    <span class="task-reward">${task.completed ? '✓ 已完成' : `+${task.reward}💰`}</span>
+                </div>
+            `).join('')}
+        `;
     }
+    
+    // 显示连续打卡天数
+    const streakContainer = document.querySelector('.streak-container');
+    if (streakContainer) {
+        const streak = getStreakDays();
+        streakContainer.innerHTML = `
+            <div class="streak-box">
+                <span class="streak-icon">🔥</span>
+                <div class="streak-info">
+                    <span class="streak-days">${streak}</span>
+                    <span class="streak-text">连续打卡</span>
+                </div>
+                <button class="checkin-btn ${isTodayCheckedIn() ? 'checked' : ''}" onclick="doCheckIn()">
+                    ${isTodayCheckedIn() ? '✓ 已打卡' : '打卡'}
+                </button>
+            </div>
+        `;
+    }
+}
+
+// 获取连续打卡天数
+function getStreakDays() {
+    const checkIns = getCheckInHistory();
+    let streak = 0;
+    const today = new Date().toDateString();
+    const yesterday = new Date(Date.now() - 86400000).toDateString();
+    
+    for (let i = checkIns.length - 1; i >= 0; i--) {
+        const checkInDate = new Date(checkIns[i]).toDateString();
+        const expectedDate = new Date(Date.now() - (streak * 86400000)).toDateString();
+        
+        if (checkInDate === expectedDate) {
+            streak++;
+        } else if (checkInDate !== yesterday && checkInDate !== today) {
+            break;
+        }
+    }
+    return streak;
+}
+
+// 获取打卡历史
+function getCheckInHistory() {
+    const data = localStorage.getItem('math_land_checkins');
+    return data ? JSON.parse(data) : [];
+}
+
+// 保存打卡历史
+function saveCheckInHistory(history) {
+    localStorage.setItem('math_land_checkins', JSON.stringify(history));
+}
+
+// 今天是否已打卡
+function isTodayCheckedIn() {
+    const checkIns = getCheckInHistory();
+    const today = new Date().toDateString();
+    return checkIns.some(date => new Date(date).toDateString() === today);
+}
+
+// 执行打卡
+function doCheckIn() {
+    if (isTodayCheckedIn()) {
+        alert('今天已经打卡啦！明天再来吧！');
+        return;
+    }
+    
+    const checkIns = getCheckInHistory();
+    checkIns.push(new Date().toISOString());
+    saveCheckInHistory(checkIns);
+    
+    // 打卡奖励积分
+    const user = Storage.getUserData();
+    const streakBonus = Math.min(getStreakDays() * 2, 20);
+    user.coins += (10 + streakBonus);
+    Storage.saveUserData(user);
+    
+    // 打卡音效
+    if (soundEnabled) {
+        try {
+            Utils.playSound('checkin');
+        } catch (e) {}
+    }
+    
+    alert(`打卡成功！获得 ${10 + streakBonus} 积分！\n连续打卡 ${getStreakDays()} 天！`);
+    loadHomePage();
 }
 
 // 选择题型
@@ -262,7 +361,10 @@ function loadCurrentQuestion() {
                     <span class="equals">=</span>
                     <span class="number answer-placeholder" id="answer-display" onclick="clearInput()">?</span>
                 </div>
-                <div class="question-hint">点击答案区域可清除</div>
+                <div class="question-tools">
+                    <button class="speak-btn" onclick="speakQuestion()">🔊 读题目</button>
+                    <div class="question-hint">点击答案区域可清除</div>
+                </div>
             </div>
         `;
     } else if (currentQuestion.type === 'fill') {
@@ -271,7 +373,10 @@ function loadCurrentQuestion() {
                 <div class="fill-question">
                     <div class="fill-content" id="fill-display">${currentQuestion.content.replace('___', '<span class="answer-placeholder" id="answer-display" onclick="clearInput()">?</span>')}</div>
                 </div>
-                <div class="question-hint">点击答案区域可清除</div>
+                <div class="question-tools">
+                    <button class="speak-btn" onclick="speakQuestion()">🔊 读题目</button>
+                    <div class="question-hint">点击答案区域可清除</div>
+                </div>
             </div>
         `;
     } else if (currentQuestion.type === 'multi') {
@@ -280,7 +385,10 @@ function loadCurrentQuestion() {
                 <div class="multi-question">
                     <div class="multi-content" id="multi-display">${currentQuestion.content.replace('?', '<span class="answer-placeholder" id="answer-display" onclick="clearInput()">?</span>')}</div>
                 </div>
-                <div class="question-hint">点击答案区域可清除</div>
+                <div class="question-tools">
+                    <button class="speak-btn" onclick="speakQuestion()">🔊 读题目</button>
+                    <div class="question-hint">点击答案区域可清除</div>
+                </div>
             </div>
         `;
     } else if (currentQuestion.type === 'compare') {
@@ -288,6 +396,9 @@ function loadCurrentQuestion() {
             <div class="question">
                 <div class="compare-question">
                     <div class="compare-content" id="compare-display">${currentQuestion.content.replace('?', '<span class="answer-placeholder" id="answer-display">?</span>')}</div>
+                </div>
+                <div class="question-tools">
+                    <button class="speak-btn" onclick="speakQuestion()">🔊 读题目</button>
                 </div>
                 <div class="compare-buttons-inline">
                     <button class="compare-btn" onclick="inputCompare('>')">&gt;</button>
@@ -335,6 +446,37 @@ function inputCompare(op) {
     updateAnswerDisplay();
 }
 
+// 语音朗读题目
+function speakQuestion() {
+    if (!currentQuestion) return;
+    
+    let text = '';
+    
+    if (currentQuestion.type === 'oral') {
+        const opText = currentQuestion.op === '+' ? '加' : '减';
+        text = `${currentQuestion.num1} ${opText} ${currentQuestion.num2} 等于几？`;
+    } else if (currentQuestion.type === 'compare') {
+        text = `${currentQuestion.num1} 和 ${currentQuestion.num2}，谁大？`;
+    } else if (currentQuestion.type === 'fill') {
+        text = currentQuestion.content.replace('___', '多少').replace('?', '');
+    } else if (currentQuestion.type === 'multi') {
+        text = currentQuestion.content.replace(/\+/g, ' 加 ').replace(/-/g, ' 减 ').replace('?', ' 等于多少？');
+    }
+    
+    if ('speechSynthesis' in window) {
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'zh-CN';
+        utterance.rate = 0.9;
+        utterance.pitch = 1.1;
+        
+        // 先停止之前的朗读
+        speechSynthesis.cancel();
+        
+        // 开始新的朗读
+        speechSynthesis.speak(utterance);
+    }
+}
+
 // 提交答案
 function submitAnswer() {
     if (!userAnswer) {
@@ -354,13 +496,16 @@ function submitAnswer() {
         
         // 连续答对奖励提示
         let message = CORRECT_MESSAGES[Math.floor(Math.random() * CORRECT_MESSAGES.length)];
+        let soundType = 'correct';
         if (consecutiveCorrect >= 5) {
             message = '🔥 连续' + consecutiveCorrect + '题正确！';
+            soundType = 'streak';
         } else if (consecutiveCorrect >= 3) {
             message = '⭐ 连续' + consecutiveCorrect + '题正确！';
+            soundType = 'streak';
         }
         showFeedback('correct', message);
-        if (soundEnabled) Utils.playSound('correct');
+        if (soundEnabled) Utils.playSound(soundType);
         
         // 如果是错题重练模式，答对的题目从错题本中移除
         if (practiceType === '错题重练') {
@@ -578,7 +723,7 @@ function showResult(correct, wrong, time, coins) {
     // 播放完成音效
     if (soundEnabled) {
         try {
-            Utils.playSound(isPerfect ? 'correct' : 'correct');
+            Utils.playSound('complete');
         } catch (e) {}
     }
     
@@ -752,49 +897,108 @@ function loadParentMode() {
     const history = Storage.getPracticeHistory();
     const wrongList = Storage.getWrongQuestions();
     
-    const accuracy = user.totalCorrect + user.totalWrong > 0 
-        ? Math.round((user.totalCorrect / (user.totalCorrect + user.totalWrong)) * 100) 
-        : 0;
+    const total = user.totalCorrect + user.totalWrong;
+    const accuracy = total > 0 ? Math.round((user.totalCorrect / total) * 100) : 0;
+    
+    // 计算最近7天的练习情况
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    const recentRecords = history.filter(r => new Date(r.date) >= sevenDaysAgo);
+    
+    // 按题型统计
+    const typeStats = {};
+    history.forEach(r => {
+        const type = r.type.split(' ')[0];
+        if (!typeStats[type]) typeStats[type] = { correct: 0, total: 0 };
+        typeStats[type].correct += r.correct;
+        typeStats[type].total += r.total;
+    });
     
     const container = document.querySelector('.parent-content');
     if (!container) return;
     
-    // 简单的进度条可视化
-    const accuracyWidth = accuracy;
-    
     container.innerHTML = `
         <div class="stats-section">
-            <h3>📊 学习统计</h3>
+            <h3>📊 学习概览</h3>
             <div class="stats-grid">
                 <div class="stat-card">
+                    <span class="stat-icon">📝</span>
                     <span class="stat-num">${user.practiceCount}</span>
                     <span class="stat-desc">总练习次数</span>
                 </div>
                 <div class="stat-card">
+                    <span class="stat-icon">✅</span>
                     <span class="stat-num">${user.totalCorrect}</span>
                     <span class="stat-desc">总答对题数</span>
                 </div>
                 <div class="stat-card">
+                    <span class="stat-icon">❌</span>
                     <span class="stat-num">${user.totalWrong}</span>
                     <span class="stat-desc">总错题数</span>
                 </div>
                 <div class="stat-card">
+                    <span class="stat-icon">⭐</span>
                     <span class="stat-num">${accuracy}%</span>
                     <span class="stat-desc">正确率</span>
                 </div>
             </div>
             
             <!-- 正确率进度条 -->
-            <div style="margin-top: 15px;">
-                <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                    <span style="font-size: 13px; color: #666;">正确率</span>
-                    <span style="font-size: 13px; font-weight: bold; color: #667eea;">${accuracy}%</span>
+            <div class="progress-card">
+                <div class="progress-card-header">
+                    <span>正确率趋势</span>
+                    <span class="progress-card-value">${accuracy}%</span>
                 </div>
-                <div style="width: 100%; height: 16px; background: #f0f0f0; border-radius: 8px; overflow: hidden;">
-                    <div style="width: ${accuracyWidth}%; height: 100%; background: linear-gradient(90deg, #667eea 0%, #764ba2 100%); border-radius: 8px; transition: width 0.5s;"></div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar" style="width: ${accuracy}%;"></div>
+                </div>
+                <div class="progress-card-footer">
+                    <span style="color: ${accuracy >= 80 ? '#4caf50' : (accuracy >= 60 ? '#ff9800' : '#f44336')};">
+                        ${accuracy >= 80 ? '优秀！继续保持！' : (accuracy >= 60 ? '良好，还需加油！' : '需要多加练习！')}
+                    </span>
                 </div>
             </div>
         </div>
+        
+        <div class="recent-activity">
+            <h3>📅 最近7天练习</h3>
+            <div class="activity-stats">
+                <div class="activity-stat">
+                    <span class="activity-num">${recentRecords.length}</span>
+                    <span class="activity-desc">练习天数</span>
+                </div>
+                <div class="activity-stat">
+                    <span class="activity-num">${recentRecords.reduce((sum, r) => sum + r.total, 0)}</span>
+                    <span class="activity-desc">完成题目</span>
+                </div>
+                <div class="activity-stat">
+                    <span class="activity-num">${wrongList.length}</span>
+                    <span class="activity-desc">待解决错题</span>
+                </div>
+            </div>
+            
+            <div class="quick-stats">
+                <h4>题型分布</h4>
+                <div class="quick-stat-list">
+                    ${Object.keys(typeStats).slice(0, 4).map(type => {
+                        const stat = typeStats[type];
+                        const acc = stat.total > 0 ? Math.round((stat.correct / stat.total) * 100) : 0;
+                        return `
+                            <div class="quick-stat-item">
+                                <div class="quick-stat-header">
+                                    <span>${type}</span>
+                                    <span style="color: #667eea; font-weight: bold;">${acc}%</span>
+                                </div>
+                                <div class="quick-stat-bar">
+                                    <div class="quick-stat-progress" style="width: ${acc}%;"></div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            </div>
+        </div>
+        
         <div class="history-section">
             <h3>📜 练习记录</h3>
             ${history.length === 0 ? `
@@ -803,19 +1007,29 @@ function loadParentMode() {
                 </div>
             ` : `
                 <div class="history-list">
-                    ${history.slice(0, 20).map(record => `
-                        <div class="history-item">
-                            <span class="history-date">${Utils.formatDate(record.date)}</span>
-                            <span class="history-detail">${record.type} - ${record.correct}/${record.total}题</span>
-                            <span class="history-time">用时 ${formatTime(record.time)}</span>
-                        </div>
-                    `).join('')}
+                    ${history.slice(0, 15).map(record => {
+                        const recAcc = Math.round((record.correct / record.total) * 100);
+                        return `
+                            <div class="history-item">
+                                <div class="history-main">
+                                    <span class="history-date">${Utils.formatDate(record.date)}</span>
+                                    <span class="history-detail">${record.type}</span>
+                                </div>
+                                <div class="history-right">
+                                    <span class="history-accuracy" style="color: ${recAcc >= 80 ? '#4caf50' : '#ff9800'};">
+                                        ${record.correct}/${record.total}题 (${recAcc}%)
+                                    </span>
+                                    <span class="history-time">${formatTime(record.time)}</span>
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
                 </div>
             `}
         </div>
-        <div style="display: flex; gap: 10px; margin-top: 15px;">
-            <button class="export-btn" onclick="exportData()" style="flex: 1;">📤 导出数据</button>
-            <button class="export-btn" onclick="importData()" style="flex: 1; background: #4caf50;">📥 导入数据</button>
+        <div class="action-buttons">
+            <button class="export-btn" onclick="exportData()">📤 导出数据</button>
+            <button class="export-btn" onclick="importData()" style="background: #4caf50;">📥 导入数据</button>
         </div>
     `;
 }
@@ -1007,6 +1221,8 @@ window.inputNumber = inputNumber;
 window.clearInput = clearInput;
 window.inputCompare = inputCompare;
 window.updateAnswerDisplay = updateAnswerDisplay;
+window.speakQuestion = speakQuestion;
+window.doCheckIn = doCheckIn;
 window.confirmExit = confirmExit;
 window.restartPractice = restartPractice;
 window.clearWrongList = clearWrongList;

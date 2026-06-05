@@ -9,51 +9,53 @@
 <body>
     <div id="app">
         <div id="home-page" class="page active">
-            <div class="header">
-                <h1 class="title">🧮 数学乐园</h1>
-                <div class="user-info">
-                    <span class="coins">💰 0</span>
-                    <span class="level">等级 1</span>
-                </div>
-            </div>
-            
-            <div class="main-menu">
-                <button class="menu-btn custom-practice" onclick="showPage('custom-practice')">
-                    <span class="btn-icon">✏️</span>
-                    <span class="btn-text">自定义练习</span>
-                </button>
-                
-                <button class="menu-btn random-practice" onclick="showPage('random-practice')">
-                    <span class="btn-icon">🎲</span>
-                    <span class="btn-text">随机混合练习</span>
-                </button>
-                
-                <button class="menu-btn challenge-mode" onclick="showPage('challenge')">
-                    <span class="btn-icon">🏆</span>
-                    <span class="btn-text">挑战模式</span>
-                </button>
-            </div>
-            
-            <div class="daily-tasks">
-                <h3>📋 每日任务</h3>
-                <div class="tasks-list"></div>
-            </div>
-            
-            <div class="quick-actions">
-                <button class="action-btn" onclick="showPage('wrong-list')">
-                    <span>📝 错题本</span>
-                </button>
-                <button class="action-btn" onclick="showPage('medals')">
-                    <span>🏅 我的勋章</span>
-                </button>
-                <button class="action-btn" onclick="showPage('shop')">
-                    <span>🛒 主题商店</span>
-                </button>
-                <button class="action-btn" onclick="showPage('parent-mode')">
-                    <span>👨‍👩‍👧 家长模式</span>
-                </button>
+        <div class="header">
+            <h1 class="title">🧮 数学乐园</h1>
+            <div class="user-info">
+                <span class="coins">💰 0</span>
+                <span class="level">等级 1</span>
             </div>
         </div>
+        
+        <div class="streak-container"></div>
+        
+        <div class="main-menu">
+            <button class="menu-btn custom-practice" onclick="showPage('custom-practice')">
+                <span class="btn-icon">✏️</span>
+                <span class="btn-text">自定义练习</span>
+            </button>
+            
+            <button class="menu-btn random-practice" onclick="showPage('random-practice')">
+                <span class="btn-icon">🎲</span>
+                <span class="btn-text">随机混合练习</span>
+            </button>
+            
+            <button class="menu-btn challenge-mode" onclick="showPage('challenge')">
+                <span class="btn-icon">🏆</span>
+                <span class="btn-text">挑战模式</span>
+            </button>
+        </div>
+        
+        <div class="daily-tasks">
+            <h3>📋 每日任务</h3>
+            <div class="tasks-list"></div>
+        </div>
+        
+        <div class="quick-actions">
+            <button class="action-btn" onclick="showPage('wrong-list')">
+                <span>📝 错题本</span>
+            </button>
+            <button class="action-btn" onclick="showPage('medals')">
+                <span>🏅 我的勋章</span>
+            </button>
+            <button class="action-btn" onclick="showPage('shop')">
+                <span>🛒 主题商店</span>
+            </button>
+            <button class="action-btn" onclick="showPage('parent-mode')">
+                <span>👨‍👩‍👧 家长模式</span>
+            </button>
+        </div>
+    </div>
 
         <div id="custom-practice" class="page">
             <div class="header">

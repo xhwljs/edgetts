@@ -394,13 +394,44 @@ body {
     100% { transform: scale(1); }
 }
 
+/* 题目工具区域 */
+.question-tools {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+/* 语音按钮 */
+.speak-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 25px;
+    background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
+}
+
+.speak-btn:active {
+    transform: scale(0.95);
+    box-shadow: 0 1px 4px rgba(76, 175, 80, 0.3);
+}
+
+.speak-btn:hover {
+    background: linear-gradient(135deg, #45a049 0%, #3d8b40 100%);
+}
+
 /* 答案输入提示区域 */
 .question-hint {
     text-align: center;
     font-size: 13px;
     color: #999;
-    margin-top: 12px;
-    padding: 8px 12px;
+    padding: 6px 12px;
     background: #f5f5f5;
     border-radius: 8px;
 }
@@ -684,6 +715,108 @@ body {
  .result-content {
     text-align: center;
     padding: 25px 15px;
+}
+
+/* 打卡区域样式 */
+.streak-container {
+    padding: 0 15px 15px;
+}
+
+.streak-box {
+    background: linear-gradient(135deg, #ff9800 0%, #ff5722 100%);
+    border-radius: 15px;
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 4px 12px rgba(255, 152, 0, 0.3);
+}
+
+.streak-icon {
+    font-size: 40px;
+}
+
+.streak-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+}
+
+.streak-days {
+    font-size: 32px;
+    font-weight: bold;
+    color: white;
+}
+
+.streak-text {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.checkin-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 20px;
+    background: white;
+    color: #ff9800;
+    font-weight: bold;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.checkin-btn.checked {
+    background: rgba(255, 255, 255, 0.3);
+    color: white;
+}
+
+.checkin-btn:active {
+    transform: scale(0.95);
+}
+
+/* 每日任务目标样式 */
+.daily-goal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    font-weight: bold;
+    color: #333;
+}
+
+.goal-title {
+    font-size: 14px;
+}
+
+.goal-progress {
+    font-size: 14px;
+    color: #667eea;
+}
+
+.goal-bar {
+    width: 100%;
+    height: 12px;
+    background: #f0f0f0;
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 15px;
+}
+
+.goal-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    border-radius: 6px;
+    transition: width 0.5s ease;
+}
+
+.task.completed {
+    opacity: 0.7;
+}
+
+.task.completed .task-text {
+    text-decoration: line-through;
+    color: #999;
 }
 
 .result-icon {
@@ -1043,4 +1176,203 @@ body {
     .keypad-btn {
         height: 45px;
     }
+}
+
+/* 家长模式增强样式 */
+.stat-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.stat-icon {
+    font-size: 32px;
+    margin-bottom: 8px;
+}
+
+.stat-num {
+    font-size: 32px;
+    font-weight: bold;
+    color: #667eea;
+}
+
+.stat-desc {
+    font-size: 14px;
+    color: #999;
+    margin-top: 5px;
+}
+
+/* 进度卡 */
+.progress-card {
+    background: white;
+    border-radius: 15px;
+    padding: 20px;
+    margin-top: 15px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.progress-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.progress-card-header span:first-child {
+    color: #333;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.progress-card-value {
+    font-size: 22px;
+    font-weight: bold;
+    color: #667eea;
+}
+
+.progress-bar-container {
+    width: 100%;
+    height: 18px;
+    background: #f0f0f0;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    border-radius: 10px;
+    transition: width 0.8s ease;
+}
+
+.progress-card-footer {
+    margin-top: 10px;
+    text-align: center;
+    font-size: 13px;
+}
+
+/* 近期活动 */
+.recent-activity {
+    margin-top: 20px;
+}
+
+.activity-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.activity-stat {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.activity-num {
+    display: block;
+    font-size: 28px;
+    font-weight: bold;
+    color: #667eea;
+}
+
+.activity-desc {
+    display: block;
+    font-size: 13px;
+    color: #999;
+    margin-top: 5px;
+}
+
+/* 快速统计 */
+.quick-stats {
+    background: white;
+    border-radius: 12px;
+    padding: 15px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.quick-stats h4 {
+    margin: 0 0 12px 0;
+    font-size: 14px;
+    color: #333;
+}
+
+.quick-stat-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.quick-stat-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.quick-stat-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 6px;
+    font-size: 13px;
+}
+
+.quick-stat-bar {
+    width: 100%;
+    height: 8px;
+    background: #f0f0f0;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.quick-stat-progress {
+    height: 100%;
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    border-radius: 4px;
+    transition: width 0.5s ease;
+}
+
+/* 练习记录增强 */
+.history-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.history-main {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.history-right {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    align-items: flex-end;
+}
+
+.history-accuracy {
+    font-size: 15px;
+    font-weight: bold;
+}
+
+/* 操作按钮 */
+.action-buttons {
+    display: flex;
+    gap: 12px;
+    margin-top: 15px;
+}
+
+.action-buttons .export-btn {
+    flex: 1;
+    margin-top: 0;
 }
