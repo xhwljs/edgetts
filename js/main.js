@@ -17,6 +17,8 @@ let challengeGroupId = 0;
 let challengeLevelId = 0;
 let timerInterval = null;
 let soundEnabled = true;
+let consecutiveCorrect = 0; // 连续答对计数
+let maxConsecutive = 0; // 最大连续答对
 
 const CORRECT_MESSAGES = ['太棒了！', '正确！', '真聪明！', '答对了！', '做得好！', '真厉害！'];
 const WRONG_MESSAGES = ['再想想！', '不对哦！', '加油！', '继续努力！', '别灰心！'];
@@ -202,6 +204,8 @@ function startPracticeSession() {
     totalTime = 0;
     startTime = Date.now();
     userAnswer = '';
+    consecutiveCorrect = 0;
+    maxConsecutive = 0;
     
     // 启动计时器
     if (timerInterval) clearInterval(timerInterval);
@@ -302,7 +306,19 @@ function submitAnswer() {
     
     if (isCorrect) {
         correctCount++;
-        showFeedback('correct', CORRECT_MESSAGES[Math.floor(Math.random() * CORRECT_MESSAGES.length)]);
+        consecutiveCorrect++;
+        if (consecutiveCorrect > maxConsecutive) {
+            maxConsecutive = consecutiveCorrect;
+        }
+        
+        // 连续答对奖励提示
+        let message = CORRECT_MESSAGES[Math.floor(Math.random() * CORRECT_MESSAGES.length)];
+        if (consecutiveCorrect >= 5) {
+            message = '🔥 连续' + consecutiveCorrect + '题正确！';
+        } else if (consecutiveCorrect >= 3) {
+            message = '⭐ 连续' + consecutiveCorrect + '题正确！';
+        }
+        showFeedback('correct', message);
         if (soundEnabled) Utils.playSound('correct');
         
         // 如果是错题重练模式，答对的题目从错题本中移除
@@ -311,6 +327,7 @@ function submitAnswer() {
         }
     } else {
         wrongCount++;
+        consecutiveCorrect = 0; // 重置连续答对计数
         showFeedback('wrong', `${WRONG_MESSAGES[Math.floor(Math.random() * WRONG_MESSAGES.length)]} 正确答案是 ${currentQuestion.answer}`);
         if (soundEnabled) Utils.playSound('wrong');
         
@@ -441,20 +458,58 @@ function completeChallenge() {
 function updateMedals() {
     const medals = Storage.getMedalsData();
     const user = Storage.getUserData();
+    const newlyUnlocked = [];
     
-    if (user.practiceCount >= 1) medals[0].unlocked = true;
-    if (user.totalCorrect >= 100) medals[1].unlocked = true;
-    if (user.totalCorrect >= 500) medals[2].unlocked = true;
-    if (correctCount === currentQuestions.length && currentQuestions.length >= 10) {
+    if (user.practiceCount >= 1 && !medals[0].unlocked) {
+        medals[0].unlocked = true;
+        newlyUnlocked.push(medals[0]);
+    }
+    if (user.totalCorrect >= 100 && !medals[1].unlocked) {
+        medals[1].unlocked = true;
+        newlyUnlocked.push(medals[1]);
+    }
+    if (user.totalCorrect >= 500 && !medals[2].unlocked) {
+        medals[2].unlocked = true;
+        newlyUnlocked.push(medals[2]);
+    }
+    if (correctCount === currentQuestions.length && currentQuestions.length >= 10 && !medals[4].unlocked) {
         medals[4].unlocked = true;
+        newlyUnlocked.push(medals[4]);
     }
     
     const allCompleted = Storage.getChallengeProgress().groups.every(group => 
         group.levels.every(level => level.completed)
     );
-    if (allCompleted) medals[5].unlocked = true;
+    if (allCompleted && !medals[5].unlocked) {
+        medals[5].unlocked = true;
+        newlyUnlocked.push(medals[5]);
+    }
     
     Storage.saveMedalsData(medals);
+    
+    // 显示新解锁的勋章
+    if (newlyUnlocked.length > 0) {
+        showAchievement(newlyUnlocked[0]);
+    }
+}
+
+// 显示成就解锁弹窗
+function showAchievement(medal) {
+    const modal = document.getElementById('achievement-modal');
+    const iconEl = document.querySelector('.achievement-icon');
+    const nameEl = document.getElementById('achievement-name');
+    const descEl = document.getElementById('achievement-desc');
+    
+    if (iconEl) iconEl.textContent = medal.icon;
+    if (nameEl) nameEl.textContent = medal.name;
+    if (descEl) descEl.textContent = medal.description;
+    if (modal) modal.classList.add('show');
+}
+
+// 关闭成就弹窗
+function closeAchievementModal() {
+    const modal = document.getElementById('achievement-modal');
+    if (modal) modal.classList.remove('show');
 }
 
 // 显示结果页面
@@ -463,6 +518,22 @@ function showResult(correct, wrong, time, coins) {
     const isPerfect = correct === currentQuestions.length;
     const accuracy = Math.round((correct / currentQuestions.length) * 100);
     
+    // 连续答对奖励额外积分
+    let bonusCoins = 0;
+    if (maxConsecutive >= 10) {
+        bonusCoins = 20;
+    } else if (maxConsecutive >= 5) {
+        bonusCoins = 10;
+    } else if (maxConsecutive >= 3) {
+        bonusCoins = 5;
+    }
+    
+    if (bonusCoins > 0) {
+        const user = Storage.getUserData();
+        user.coins += bonusCoins;
+        Storage.saveUserData(user);
+    }
+    
     // 播放完成音效
     if (soundEnabled) {
         try {
@@ -470,34 +541,34 @@ function showResult(correct, wrong, time, coins) {
         } catch (e) {}
     }
     
-    resultPage.innerHTML = `
-        <div class="header">
-            <button class="back-btn" onclick="showPage('home-page')">← 返回首页</button>
-        </div>
-        <div class="result-content">
-            <div class="result-icon">${isPerfect ? '🎉' : (accuracy >= 80 ? '👍' : '💪')}</div>
-            <h2>${isPerfect ? '太棒了！全对！' : (accuracy >= 80 ? '做得很好！' : '继续加油！')}</h2>
-            <div class="stats">
-                <div class="stat-item">
-                    <span class="stat-value">${correct}/${currentQuestions.length}</span>
-                    <span class="stat-label">正确率 ${accuracy}%</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-value">${formatTime(time)}</span>
-                    <span class="stat-label">用时</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-value">+${coins}</span>
-                    <span class="stat-label">获得积分</span>
-                </div>
-            </div>
-            <div class="result-actions">
-                ${wrong > 0 ? `<button class="result-btn" onclick="showPage('wrong-list')">📝 查看错题 (${wrong}题)</button>` : ''}
-                <button class="result-btn" onclick="restartPractice()">🔄 再练一次</button>
-                <button class="result-btn" onclick="showPage('home-page')">🏠 返回首页</button>
-            </div>
-        </div>
-    `;
+    resultPage.innerHTML = 
+        '<div class="header">' +
+            '<button class="back-btn" onclick="showPage(\'home-page\')">← 返回首页</button>' +
+        '</div>' +
+        '<div class="result-content">' +
+            '<div class="result-icon">' + (isPerfect ? '🎉' : (accuracy >= 80 ? '👍' : '💪')) + '</div>' +
+            '<h2>' + (isPerfect ? '太棒了！全对！' : (accuracy >= 80 ? '做得很好！' : '继续加油！')) + '</h2>' +
+            '<div class="stats">' +
+                '<div class="stat-item">' +
+                    '<span class="stat-value">' + correct + '/' + currentQuestions.length + '</span>' +
+                    '<span class="stat-label">正确率 ' + accuracy + '%</span>' +
+                '</div>' +
+                '<div class="stat-item">' +
+                    '<span class="stat-value">' + formatTime(time) + '</span>' +
+                    '<span class="stat-label">用时</span>' +
+                '</div>' +
+                '<div class="stat-item">' +
+                    '<span class="stat-value">+' + coins + '</span>' +
+                    '<span class="stat-label">获得积分</span>' +
+                '</div>' +
+            '</div>' +
+            (maxConsecutive >= 3 ? '<div style="text-align: center; margin: 15px 0; padding: 10px; background: #fff8e1; border-radius: 10px;"><span style="font-size: 20px;">🔥</span> 最大连续答对: <strong style="color: #ff9800;">' + maxConsecutive + '题</strong>' + (bonusCoins > 0 ? ' <span style="color: #4caf50;">(+' + bonusCoins + '奖励积分)</span>' : '') + '</div>' : '') +
+            '<div class="result-actions">' +
+                (wrong > 0 ? '<button class="result-btn" onclick="showPage(\'wrong-list\')">📝 查看错题 (' + wrong + '题)</button>' : '') +
+                '<button class="result-btn" onclick="restartPractice()">🔄 再练一次</button>' +
+                '<button class="result-btn" onclick="showPage(\'home-page\')">🏠 返回首页</button>' +
+            '</div>' +
+        '</div>';
     
     showPage('result-page');
 }
@@ -899,3 +970,4 @@ window.clearWrongList = clearWrongList;
 window.exportData = exportData;
 window.importData = importData;
 window.buyTheme = buyTheme;
+window.closeAchievementModal = closeAchievementModal;
