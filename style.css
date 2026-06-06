@@ -413,47 +413,91 @@ body::before {
 }
 
 .practice-config {
-    padding: 8px;
+    padding: 6px;
 }
 
 .section {
-    margin-bottom: 16px;
-    background: #fafbfc;
-    padding: 14px;
-    border-radius: 14px;
-    border: 1px solid rgba(0, 0, 0, 0.05);
+    margin-bottom: 14px;
+    background: linear-gradient(145deg, #f8f9ff 0%, #f0f4ff 100%);
+    padding: 16px;
+    border-radius: 18px;
+    border: 1px solid rgba(102, 126, 234, 0.1);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.08);
+    animation: configSectionFadeIn 0.5s ease-out;
+}
+
+.section:nth-child(1) { animation-delay: 0.05s; }
+.section:nth-child(2) { animation-delay: 0.12s; }
+.section:nth-child(3) { animation-delay: 0.19s; }
+.section:nth-child(4) { animation-delay: 0.26s; }
+.section:nth-child(5) { animation-delay: 0.33s; }
+
+@keyframes configSectionFadeIn {
+    from {
+        opacity: 0;
+        transform: translateX(-15px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
 }
 
 .section h3 {
     font-size: 14px;
     color: #667eea;
-    margin-bottom: 10px;
-    font-weight: 600;
+    margin-bottom: 12px;
+    font-weight: 700;
     letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.section h3::before {
+    content: '✨';
+    font-size: 16px;
 }
 
 .options {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
+    gap: 10px;
 }
 
 .option-btn {
-    padding: 10px 16px;
-    border: 2px solid #e8eaed;
-    border-radius: 10px;
-    background: #fff;
-    font-size: 13px;
+    padding: 12px 18px;
+    border: 2px solid #e0e5ff;
+    border-radius: 12px;
+    background: linear-gradient(145deg, #ffffff 0%, #f8f9ff 100%);
+    font-size: 14px;
     cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    font-weight: 500;
-    color: #333;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    font-weight: 600;
+    color: #4a5568;
+    box-shadow: 0 3px 8px rgba(102, 126, 234, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.option-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+    transition: left 0.5s;
+}
+
+.option-btn:hover::before {
+    left: 100%;
 }
 
 .option-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 6px 16px rgba(102, 126, 234, 0.25);
     border-color: #667eea;
 }
 
@@ -461,33 +505,44 @@ body::before {
     border-color: #667eea;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: #fff;
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 6px 18px rgba(102, 126, 234, 0.45);
+    transform: scale(1.02);
 }
 
 .option-btn:active {
-    transform: scale(0.95);
+    transform: scale(0.96);
 }
 
 .start-btn {
     width: 100%;
-    padding: 16px;
+    padding: 18px;
     border: none;
-    border-radius: 14px;
+    border-radius: 16px;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: #fff;
-    font-size: 16px;
+    font-size: 18px;
     font-weight: bold;
     cursor: pointer;
-    margin-top: 16px;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    margin-top: 20px;
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
     letter-spacing: 1px;
+    animation: startBtnPulse 2s ease-in-out infinite;
+}
+
+@keyframes startBtnPulse {
+    0%, 100% { box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5); }
+    50% { box-shadow: 0 6px 25px rgba(102, 126, 234, 0.7); }
 }
 
 .start-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.6);
+}
+
+.start-btn:active {
+    transform: translateY(-1px) scale(0.98);
 }
 
 .start-btn:active {
@@ -556,77 +611,95 @@ body::before {
     justify-content: center;
     align-items: center;
     min-height: 100px;
-    padding: 14px 12px;
-    background: linear-gradient(135deg, #f8f9ff 0%, #f0f4ff 100%);
-    border-radius: 14px;
-    margin: 8px 0;
-    box-shadow: inset 0 2px 10px rgba(102, 126, 234, 0.1);
+    padding: 16px 14px;
+    background: linear-gradient(145deg, #f8f9ff 0%, #e8f2ff 100%);
+    border-radius: 20px;
+    margin: 10px 0;
+    box-shadow: 0 4px 16px rgba(102, 126, 234, 0.12), inset 0 2px 10px rgba(102, 126, 234, 0.05);
+    border: 1px solid rgba(102, 126, 234, 0.08);
+    position: relative;
+    overflow: hidden;
+}
+
+.question-area::before {
+    content: '✨';
+    position: absolute;
+    top: 8px;
+    right: 12px;
+    font-size: 16px;
+    opacity: 0.5;
 }
 
 .question {
     text-align: center;
-    animation: slideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: slideIn 0.45s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @keyframes slideIn {
-    from { opacity: 0; transform: translateX(30px) scale(0.9); }
-    to { opacity: 1; transform: translateX(0) scale(1); }
+    from { opacity: 0; transform: scale(0.85) translateY(-10px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
 }
 
 .oral-question {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
-    font-size: 24px;
+    gap: 12px;
+    font-size: 26px;
 }
 
 .number {
-    font-size: 38px;
-    font-weight: bold;
+    font-size: 40px;
+    font-weight: 800;
     color: #333;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-shadow: 0 3px 8px rgba(102, 126, 234, 0.15);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
 .operator {
-    font-size: 30px;
+    font-size: 32px;
     color: #667eea;
-    font-weight: bold;
+    font-weight: 800;
+    text-shadow: 0 2px 4px rgba(102, 126, 234, 0.2);
 }
 
 .equals {
-    font-size: 30px;
+    font-size: 32px;
     color: #764ba2;
-    font-weight: bold;
+    font-weight: 800;
+    text-shadow: 0 2px 4px rgba(118, 75, 162, 0.2);
 }
 
 .answer-placeholder {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-width: 58px;
-    height: 48px;
-    background: #fff;
-    border: 3px dashed #ccc;
-    border-radius: 10px;
-    font-size: 32px;
-    font-weight: bold;
-    color: #bbb;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+    min-width: 64px;
+    height: 54px;
+    background: linear-gradient(145deg, #ffffff 0%, #f8f9ff 100%);
+    border: 3px dashed #b8c0ff;
+    border-radius: 14px;
+    font-size: 34px;
+    font-weight: 800;
+    color: #a8b3ff;
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
 }
 
 .answer-placeholder.has-answer {
     border: 3px solid #667eea;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: #fff;
-    animation: answerPop 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-    box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+    animation: answerPop 0.35s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    box-shadow: 0 6px 24px rgba(102, 126, 234, 0.45);
 }
 
 @keyframes answerPop {
     0% { transform: scale(1); }
-    50% { transform: scale(1.12); }
+    50% { transform: scale(1.18); }
     100% { transform: scale(1); }
 }
 
@@ -635,31 +708,36 @@ body::before {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 6px;
-    margin-top: 8px;
+    gap: 8px;
+    margin-top: 10px;
 }
 
 /* 语音按钮 */
 .speak-btn {
-    padding: 6px 14px;
+    padding: 8px 18px;
     border: none;
-    border-radius: 18px;
-    background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+    border-radius: 22px;
+    background: linear-gradient(135deg, #4caf50 0%, #388e3c 100%);
     color: white;
-    font-size: 12px;
-    font-weight: bold;
+    font-size: 13px;
+    font-weight: 700;
     cursor: pointer;
-    transition: all 0.2s;
-    box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.35);
+    display: flex;
+    align-items: center;
+    gap: 6px;
 }
 
 .speak-btn:active {
-    transform: scale(0.95);
-    box-shadow: 0 1px 4px rgba(76, 175, 80, 0.3);
+    transform: scale(0.96);
+    box-shadow: 0 2px 6px rgba(76, 175, 80, 0.25);
 }
 
 .speak-btn:hover {
-    background: linear-gradient(135deg, #45a049 0%, #3d8b40 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(76, 175, 80, 0.45);
+    background: linear-gradient(135deg, #43a047 0%, #2e7d32 100%);
 }
 
 /* 答案输入提示区域 */
@@ -718,83 +796,108 @@ body::before {
 
 /* 数字键盘 */
 .answer-keypad {
-    padding: 10px;
-    margin-top: 10px;
-    background: linear-gradient(135deg, #fafbfc 0%, #f0f2f5 100%);
-    border-radius: 14px;
+    padding: 12px;
+    margin-top: 12px;
+    background: linear-gradient(145deg, #f8f9ff 0%, #e8eefc 100%);
+    border-radius: 20px;
+    border: 1px solid rgba(102, 126, 234, 0.1);
+    box-shadow: 0 4px 16px rgba(102, 126, 234, 0.1);
 }
 
 .keypad-row {
     display: flex;
-    gap: 8px;
-    margin-bottom: 8px;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.keypad-row:last-child {
+    margin-bottom: 0;
 }
 
 .keypad-btn {
     flex: 1;
-    height: 50px;
+    height: 56px;
     border: none;
-    border-radius: 12px;
-    background: linear-gradient(135deg, #ffffff 0%, #f5f5f5 100%);
-    font-size: 24px;
-    font-weight: bold;
-    color: #333;
+    border-radius: 16px;
+    background: linear-gradient(145deg, #ffffff 0%, #f0f4ff 100%);
+    font-size: 26px;
+    font-weight: 800;
+    color: #4a5568;
     cursor: pointer;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+    position: relative;
+    overflow: hidden;
+}
+
+.keypad-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+    transition: left 0.4s;
+}
+
+.keypad-btn:hover::before {
+    left: 100%;
 }
 
 .keypad-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.25);
 }
 
 .keypad-btn:active {
-    transform: scale(0.95) translateY(0);
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    transform: scale(0.96) translateY(0);
+    box-shadow: 0 3px 8px rgba(102, 126, 234, 0.15);
 }
 
 .keypad-btn.clear-btn {
-    background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
-    color: #e53935;
-    box-shadow: 0 4px 12px rgba(229, 57, 53, 0.2);
+    background: linear-gradient(145deg, #ffebee 0%, #ffdde0 100%);
+    color: #d32f2f;
+    box-shadow: 0 4px 12px rgba(211, 47, 47, 0.2);
+    font-size: 16px;
 }
 
 .keypad-btn.clear-btn:hover {
-    box-shadow: 0 6px 18px rgba(229, 57, 53, 0.3);
+    box-shadow: 0 8px 20px rgba(211, 47, 47, 0.35);
 }
 
 .keypad-btn.submit-btn {
-    background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%);
+    background: linear-gradient(135deg, #4caf50 0%, #388e3c 100%);
     color: #fff;
-    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+    box-shadow: 0 4px 14px rgba(76, 175, 80, 0.35);
+    font-size: 16px;
 }
 
 .keypad-btn.submit-btn:hover {
-    box-shadow: 0 6px 18px rgba(76, 175, 80, 0.4);
+    box-shadow: 0 8px 22px rgba(76, 175, 80, 0.5);
 }
 
 /* 当前答案显示 */
 .current-answer {
     text-align: center;
-    font-size: 36px;
-    font-weight: bold;
+    font-size: 40px;
+    font-weight: 800;
     color: #667eea;
-    min-height: 48px;
-    margin-bottom: 6px;
-    text-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+    min-height: 54px;
+    margin-bottom: 8px;
+    text-shadow: 0 3px 10px rgba(102, 126, 234, 0.35);
 }
 
 .feedback {
     text-align: center;
-    padding: 12px;
-    margin: 10px 0;
-    border-radius: 12px;
-    font-size: 16px;
-    font-weight: bold;
+    padding: 14px 16px;
+    margin: 12px 0;
+    border-radius: 16px;
+    font-size: 17px;
+    font-weight: 700;
     opacity: 0;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
 }
 
 .feedback.show {
