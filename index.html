@@ -19,49 +19,63 @@
         
         <div class="streak-container"></div>
         
-        <div class="main-menu">
-            <button class="menu-btn custom-practice" onclick="showPage('custom-practice')">
-                <span class="btn-icon">✏️</span>
-                <span class="btn-text">自定义练习</span>
-            </button>
-            
-            <button class="menu-btn random-practice" onclick="showPage('random-practice')">
-                <span class="btn-icon">🎲</span>
-                <span class="btn-text">随机混合练习</span>
-            </button>
-            
-            <button class="menu-btn challenge-mode" onclick="showPage('challenge')">
-                <span class="btn-icon">🏆</span>
-                <span class="btn-text">挑战模式</span>
-            </button>
-            
-            <button class="menu-btn timed-challenge" onclick="showTimedChallenge()">
-                <span class="btn-icon">⏱️</span>
-                <span class="btn-text">限时挑战</span>
-            </button>
+        <div class="cards-section">
+            <div class="card-group-title">🎯 练习模式</div>
+            <div class="practice-cards">
+                <div class="practice-card custom-practice-card" onclick="showPage('custom-practice')">
+                    <div class="card-icon">✏️</div>
+                    <div class="card-title">自定义练习</div>
+                    <div class="card-desc">选择难度和题型</div>
+                </div>
+                <div class="practice-card random-practice-card" onclick="showPage('random-practice')">
+                    <div class="card-icon">🎲</div>
+                    <div class="card-title">随机练习</div>
+                    <div class="card-desc">混合题型挑战</div>
+                </div>
+                <div class="practice-card challenge-card" onclick="showPage('challenge')">
+                    <div class="card-icon">🏆</div>
+                    <div class="card-title">挑战模式</div>
+                    <div class="card-desc">闯关升级</div>
+                </div>
+                <div class="practice-card timed-card" onclick="showTimedChallenge()">
+                    <div class="card-icon">⏱️</div>
+                    <div class="card-title">限时挑战</div>
+                    <div class="card-desc">速度大比拼</div>
+                </div>
+            </div>
         </div>
         
-        <div class="daily-tasks">
-            <h3>📋 每日任务</h3>
-            <div class="tasks-list"></div>
+        <div class="cards-section">
+            <div class="card-group-title">📋 每日任务</div>
+            <div class="tasks-card">
+                <div class="tasks-list"></div>
+            </div>
         </div>
         
-        <div class="quick-actions">
-            <button class="action-btn" onclick="showPage('wrong-list')">
-                <span>📝 错题本</span>
-            </button>
-            <button class="action-btn" onclick="showPage('study-history')">
-                <span>📊 学习记录</span>
-            </button>
-            <button class="action-btn" onclick="showPage('medals')">
-                <span>🏅 我的勋章</span>
-            </button>
-            <button class="action-btn" onclick="showPage('shop')">
-                <span>🛒 主题商店</span>
-            </button>
-            <button class="action-btn" onclick="showPage('parent-mode')">
-                <span>👨‍👩‍👧 家长模式</span>
-            </button>
+        <div class="cards-section">
+            <div class="card-group-title">🔧 快捷工具</div>
+            <div class="tools-grid">
+                <div class="tool-card" onclick="showPage('wrong-list')">
+                    <div class="tool-icon">📝</div>
+                    <div class="tool-name">错题本</div>
+                </div>
+                <div class="tool-card" onclick="showPage('study-history')">
+                    <div class="tool-icon">📊</div>
+                    <div class="tool-name">学习记录</div>
+                </div>
+                <div class="tool-card" onclick="showPage('medals')">
+                    <div class="tool-icon">🏅</div>
+                    <div class="tool-name">我的勋章</div>
+                </div>
+                <div class="tool-card" onclick="showPage('shop')">
+                    <div class="tool-icon">🛒</div>
+                    <div class="tool-name">主题商店</div>
+                </div>
+                <div class="tool-card" onclick="showPage('parent-mode')">
+                    <div class="tool-icon">👨‍👩‍👧</div>
+                    <div class="tool-name">家长模式</div>
+                </div>
+            </div>
         </div>
     </div>
 
