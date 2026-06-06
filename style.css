@@ -40,7 +40,7 @@ body::before {
     display: none;
     background: #fff;
     border-radius: 24px;
-    padding: 14px;
+    padding: 12px;
     min-height: calc(100vh - 20px);
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
     animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -65,21 +65,23 @@ body::before {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 12px;
-    padding-bottom: 10px;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
     border-bottom: 2px solid #f0f0f0;
+    gap: 8px;
 }
 
 .back-btn {
     background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
     border: none;
-    padding: 10px 16px;
-    border-radius: 22px;
-    font-size: 14px;
+    padding: 8px 14px;
+    border-radius: 20px;
+    font-size: 13px;
     cursor: pointer;
     color: #333;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     font-weight: 500;
+    flex-shrink: 0;
 }
 
 .back-btn:hover {
@@ -93,9 +95,11 @@ body::before {
 }
 
 .header h2 {
-    font-size: 19px;
+    font-size: 18px;
     color: #333;
     font-weight: 600;
+    flex: 1;
+    text-align: center;
 }
 
 .header .coins {
@@ -109,21 +113,23 @@ body::before {
 }
 
 .title {
-    font-size: 26px;
+    font-size: 24px;
     font-weight: bold;
     color: #333;
     text-align: center;
     flex: 1;
     letter-spacing: 1px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .user-info {
-    position: absolute;
-    top: 30px;
-    right: 25px;
     display: flex;
-    gap: 10px;
-    font-size: 13px;
+    gap: 8px;
+    font-size: 12px;
+    flex-shrink: 0;
+    align-items: center;
 }
 
 .user-info .level {
@@ -458,11 +464,11 @@ body::before {
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 120px;
-    padding: 18px 15px;
+    min-height: 100px;
+    padding: 14px 12px;
     background: linear-gradient(135deg, #f8f9ff 0%, #f0f4ff 100%);
-    border-radius: 16px;
-    margin: 10px 0;
+    border-radius: 14px;
+    margin: 8px 0;
     box-shadow: inset 0 2px 10px rgba(102, 126, 234, 0.1);
 }
 
@@ -480,25 +486,25 @@ body::before {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 12px;
-    font-size: 28px;
+    gap: 10px;
+    font-size: 24px;
 }
 
 .number {
-    font-size: 44px;
+    font-size: 38px;
     font-weight: bold;
     color: #333;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .operator {
-    font-size: 34px;
+    font-size: 30px;
     color: #667eea;
     font-weight: bold;
 }
 
 .equals {
-    font-size: 34px;
+    font-size: 30px;
     color: #764ba2;
     font-weight: bold;
 }
@@ -507,12 +513,12 @@ body::before {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-width: 65px;
-    height: 55px;
+    min-width: 58px;
+    height: 48px;
     background: #fff;
     border: 3px dashed #ccc;
-    border-radius: 12px;
-    font-size: 38px;
+    border-radius: 10px;
+    font-size: 32px;
     font-weight: bold;
     color: #bbb;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -529,7 +535,7 @@ body::before {
 
 @keyframes answerPop {
     0% { transform: scale(1); }
-    50% { transform: scale(1.15); }
+    50% { transform: scale(1.12); }
     100% { transform: scale(1); }
 }
 
@@ -538,18 +544,18 @@ body::before {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 8px;
-    margin-top: 10px;
+    gap: 6px;
+    margin-top: 8px;
 }
 
 /* 语音按钮 */
 .speak-btn {
-    padding: 8px 16px;
+    padding: 6px 14px;
     border: none;
-    border-radius: 20px;
+    border-radius: 18px;
     background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
     color: white;
-    font-size: 13px;
+    font-size: 12px;
     font-weight: bold;
     cursor: pointer;
     transition: all 0.2s;
@@ -568,35 +574,35 @@ body::before {
 /* 答案输入提示区域 */
 .question-hint {
     text-align: center;
-    font-size: 13px;
+    font-size: 12px;
     color: #999;
-    padding: 6px 12px;
+    padding: 5px 10px;
     background: #f5f5f5;
-    border-radius: 8px;
+    border-radius: 7px;
 }
 
 /* 键盘快捷键提示 */
 .keyboard-hint {
     text-align: center;
-    font-size: 12px;
+    font-size: 11px;
     color: #ccc;
-    margin-top: 8px;
+    margin-top: 6px;
 }
 
 .keyboard-hint kbd {
     display: inline-block;
-    padding: 2px 6px;
+    padding: 2px 5px;
     background: #fff;
     border: 1px solid #ddd;
     border-radius: 4px;
     font-family: monospace;
-    font-size: 11px;
+    font-size: 10px;
 }
 
 .answer-input {
-    width: 100px;
-    height: 50px;
-    font-size: 32px;
+    width: 90px;
+    height: 45px;
+    font-size: 28px;
     text-align: center;
     border: 3px solid #e0e0e0;
     border-radius: 10px;
@@ -608,43 +614,43 @@ body::before {
 }
 
 .fill-question, .multi-question {
-    font-size: 24px;
+    font-size: 22px;
     color: #333;
     font-weight: bold;
 }
 
 .fill-content, .multi-content {
-    margin-bottom: 10px;
+    margin-bottom: 8px;
     text-align: center;
-    font-size: 26px;
+    font-size: 24px;
 }
 
 /* 数字键盘 */
 .answer-keypad {
-    padding: 12px;
-    margin-top: 12px;
+    padding: 10px;
+    margin-top: 10px;
     background: linear-gradient(135deg, #fafbfc 0%, #f0f2f5 100%);
-    border-radius: 16px;
+    border-radius: 14px;
 }
 
 .keypad-row {
     display: flex;
-    gap: 10px;
-    margin-bottom: 10px;
+    gap: 8px;
+    margin-bottom: 8px;
 }
 
 .keypad-btn {
     flex: 1;
-    height: 55px;
+    height: 50px;
     border: none;
-    border-radius: 14px;
+    border-radius: 12px;
     background: linear-gradient(135deg, #ffffff 0%, #f5f5f5 100%);
-    font-size: 26px;
+    font-size: 24px;
     font-weight: bold;
     color: #333;
     cursor: pointer;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
 }
 
 .keypad-btn:hover {
@@ -680,20 +686,20 @@ body::before {
 /* 当前答案显示 */
 .current-answer {
     text-align: center;
-    font-size: 42px;
+    font-size: 36px;
     font-weight: bold;
     color: #667eea;
-    min-height: 55px;
-    margin-bottom: 8px;
+    min-height: 48px;
+    margin-bottom: 6px;
     text-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
 }
 
 .feedback {
     text-align: center;
-    padding: 14px;
-    margin: 12px 0;
-    border-radius: 14px;
-    font-size: 18px;
+    padding: 12px;
+    margin: 10px 0;
+    border-radius: 12px;
+    font-size: 16px;
     font-weight: bold;
     opacity: 0;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -725,28 +731,29 @@ body::before {
 }
 
 .progress {
-    font-size: 16px;
+    font-size: 14px;
     color: #667eea;
     font-weight: 600;
 }
 
 .timer {
-    font-size: 15px;
+    font-size: 14px;
     color: #764ba2;
     font-weight: 600;
     background: linear-gradient(135deg, #f8f9ff 0%, #f0f4ff 100%);
-    padding: 6px 14px;
+    padding: 5px 12px;
     border-radius: 20px;
 }
 
 .sound-btn {
     background: none;
     border: none;
-    font-size: 20px;
+    font-size: 18px;
     cursor: pointer;
-    padding: 6px 10px;
+    padding: 5px 8px;
     transition: all 0.2s;
     border-radius: 50%;
+    flex-shrink: 0;
 }
 
 .sound-btn:hover {
@@ -847,26 +854,26 @@ body::before {
 /* 比较按钮 */
 .compare-buttons {
     display: flex;
-    gap: 12px;
-    padding: 12px;
+    gap: 10px;
+    padding: 10px;
 }
 
 .compare-buttons-inline {
     display: flex;
-    gap: 18px;
+    gap: 14px;
     justify-content: center;
-    margin-top: 18px;
+    margin-top: 14px;
 }
 
 .compare-btn {
     flex: 1;
-    max-width: 110px;
-    height: 65px;
+    max-width: 95px;
+    height: 55px;
     border: none;
-    border-radius: 16px;
+    border-radius: 14px;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: #fff;
-    font-size: 30px;
+    font-size: 26px;
     font-weight: bold;
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -884,7 +891,7 @@ body::before {
 }
 
 .compare-question {
-    font-size: 34px;
+    font-size: 30px;
     font-weight: bold;
     color: #333;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
