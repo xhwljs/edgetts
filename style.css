@@ -632,95 +632,76 @@ body::before {
     justify-content: center;
     align-items: center;
     min-height: 100px;
-    padding: 16px 14px;
-    background: linear-gradient(145deg, #f8f9ff 0%, #e8f2ff 100%);
+    padding: 20px;
+    background: #fff;
     border-radius: 20px;
-    margin: 10px 0;
-    box-shadow: 0 4px 16px rgba(102, 126, 234, 0.12), inset 0 2px 10px rgba(102, 126, 234, 0.05);
-    border: 1px solid rgba(102, 126, 234, 0.08);
-    position: relative;
-    overflow: hidden;
-}
-
-.question-area::before {
-    content: '✨';
-    position: absolute;
-    top: 8px;
-    right: 12px;
-    font-size: 16px;
-    opacity: 0.5;
+    margin: 12px 0;
+    border: 2px solid #f0f4ff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
 .question {
     text-align: center;
-    animation: slideIn 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: slideIn 0.3s ease;
 }
 
 @keyframes slideIn {
-    from { opacity: 0; transform: scale(0.85) translateY(-10px); }
-    to { opacity: 1; transform: scale(1) translateY(0); }
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
 }
 
 .oral-question {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 12px;
-    font-size: 26px;
+    gap: 16px;
+    font-size: 28px;
 }
 
 .number {
-    font-size: 40px;
+    font-size: 42px;
     font-weight: 800;
     color: #333;
-    text-shadow: 0 3px 8px rgba(102, 126, 234, 0.15);
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
 .operator {
-    font-size: 32px;
+    font-size: 34px;
     color: #667eea;
     font-weight: 800;
-    text-shadow: 0 2px 4px rgba(102, 126, 234, 0.2);
 }
 
 .equals {
-    font-size: 32px;
+    font-size: 34px;
     color: #764ba2;
     font-weight: 800;
-    text-shadow: 0 2px 4px rgba(118, 75, 162, 0.2);
 }
 
 .answer-placeholder {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-width: 64px;
-    height: 54px;
-    background: linear-gradient(145deg, #ffffff 0%, #f8f9ff 100%);
+    min-width: 70px;
+    height: 58px;
+    background: #f8f9ff;
     border: 3px dashed #b8c0ff;
-    border-radius: 14px;
-    font-size: 34px;
+    border-radius: 16px;
+    font-size: 36px;
     font-weight: 800;
     color: #a8b3ff;
-    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
+    transition: all 0.3s ease;
 }
 
 .answer-placeholder.has-answer {
     border: 3px solid #667eea;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: #fff;
-    animation: answerPop 0.35s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-    box-shadow: 0 6px 24px rgba(102, 126, 234, 0.45);
+    animation: answerPop 0.3s ease;
 }
 
 @keyframes answerPop {
     0% { transform: scale(1); }
-    50% { transform: scale(1.18); }
+    50% { transform: scale(1.1); }
     100% { transform: scale(1); }
 }
 
@@ -729,36 +710,33 @@ body::before {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 8px;
-    margin-top: 10px;
+    gap: 10px;
+    margin-top: 12px;
 }
 
 /* 语音按钮 */
 .speak-btn {
-    padding: 8px 18px;
+    padding: 10px 20px;
     border: none;
-    border-radius: 22px;
-    background: linear-gradient(135deg, #4caf50 0%, #388e3c 100%);
+    border-radius: 24px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 700;
     cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.35);
+    transition: all 0.3s ease;
+    box-shadow: 0 3px 10px rgba(102, 126, 234, 0.3);
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
 }
 
 .speak-btn:active {
     transform: scale(0.96);
-    box-shadow: 0 2px 6px rgba(76, 175, 80, 0.25);
 }
 
 .speak-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(76, 175, 80, 0.45);
-    background: linear-gradient(135deg, #43a047 0%, #2e7d32 100%);
+    opacity: 0.9;
 }
 
 /* 答案输入提示区域 */
@@ -817,18 +795,18 @@ body::before {
 
 /* 数字键盘 */
 .answer-keypad {
-    padding: 12px;
-    margin-top: 12px;
-    background: linear-gradient(145deg, #f8f9ff 0%, #e8eefc 100%);
-    border-radius: 20px;
-    border: 1px solid rgba(102, 126, 234, 0.1);
-    box-shadow: 0 4px 16px rgba(102, 126, 234, 0.1);
+    padding: 16px;
+    margin-top: 16px;
+    background: #fff;
+    border-radius: 24px;
+    border: 2px solid #f0f4ff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
 .keypad-row {
     display: flex;
-    gap: 10px;
-    margin-bottom: 10px;
+    gap: 12px;
+    margin-bottom: 12px;
 }
 
 .keypad-row:last-child {
@@ -837,88 +815,74 @@ body::before {
 
 .keypad-btn {
     flex: 1;
-    height: 56px;
-    border: none;
+    height: 60px;
+    border: 2px solid #f0f4ff;
     border-radius: 16px;
-    background: linear-gradient(145deg, #ffffff 0%, #f0f4ff 100%);
-    font-size: 26px;
-    font-weight: 800;
-    color: #4a5568;
+    background: #f8f9ff;
+    font-size: 28px;
+    font-weight: 700;
+    color: #555;
     cursor: pointer;
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
-    position: relative;
-    overflow: hidden;
-}
-
-.keypad-btn::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
-    transition: left 0.4s;
-}
-
-.keypad-btn:hover::before {
-    left: 100%;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
 }
 
 .keypad-btn:hover {
-    transform: translateY(-3px) scale(1.02);
-    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.25);
+    border-color: #667eea;
+    background: #f0f4ff;
+    transform: scale(1.02);
 }
 
 .keypad-btn:active {
-    transform: scale(0.96) translateY(0);
-    box-shadow: 0 3px 8px rgba(102, 126, 234, 0.15);
+    transform: scale(0.96);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
 }
 
 .keypad-btn.clear-btn {
-    background: linear-gradient(145deg, #ffebee 0%, #ffdde0 100%);
-    color: #d32f2f;
-    box-shadow: 0 4px 12px rgba(211, 47, 47, 0.2);
+    background: #fff0f0;
+    color: #e53935;
+    border-color: #ffcdd2;
     font-size: 16px;
+    font-weight: 700;
 }
 
 .keypad-btn.clear-btn:hover {
-    box-shadow: 0 8px 20px rgba(211, 47, 47, 0.35);
+    background: #ffebee;
+    border-color: #e53935;
 }
 
 .keypad-btn.submit-btn {
-    background: linear-gradient(135deg, #4caf50 0%, #388e3c 100%);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: #fff;
-    box-shadow: 0 4px 14px rgba(76, 175, 80, 0.35);
     font-size: 16px;
+    font-weight: 700;
+    border: none;
 }
 
 .keypad-btn.submit-btn:hover {
-    box-shadow: 0 8px 22px rgba(76, 175, 80, 0.5);
+    opacity: 0.9;
+    transform: scale(1.03);
 }
 
 /* 当前答案显示 */
 .current-answer {
     text-align: center;
-    font-size: 40px;
+    font-size: 42px;
     font-weight: 800;
     color: #667eea;
-    min-height: 54px;
-    margin-bottom: 8px;
-    text-shadow: 0 3px 10px rgba(102, 126, 234, 0.35);
+    min-height: 58px;
+    margin-bottom: 10px;
 }
 
 .feedback {
     text-align: center;
-    padding: 14px 16px;
-    margin: 12px 0;
-    border-radius: 16px;
-    font-size: 17px;
+    padding: 16px 20px;
+    margin: 14px 0;
+    border-radius: 18px;
+    font-size: 18px;
     font-weight: 700;
     opacity: 0;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+    transition: all 0.3s ease;
 }
 
 .feedback.show {
