@@ -34,6 +34,11 @@
                 <span class="btn-icon">🏆</span>
                 <span class="btn-text">挑战模式</span>
             </button>
+            
+            <button class="menu-btn timed-challenge" onclick="showTimedChallenge()">
+                <span class="btn-icon">⏱️</span>
+                <span class="btn-text">限时挑战</span>
+            </button>
         </div>
         
         <div class="daily-tasks">
@@ -70,6 +75,7 @@
                         <button class="option-btn active" onclick="selectType('oral')">🗣️ 口算题</button>
                         <button class="option-btn" onclick="selectType('fill')">✏️ 填空题</button>
                         <button class="option-btn" onclick="selectType('multi')">🔢 连加连减</button>
+                        <button class="option-btn" onclick="selectType('multiply')">✖️ 乘法练习</button>
                         <button class="option-btn" onclick="selectType('compare')">⚖️ 比大小</button>
                     </div>
                 </div>
@@ -77,10 +83,10 @@
                 <div class="section">
                     <h3>选择难度</h3>
                     <div class="options" id="level-options">
-                        <button class="option-btn active" onclick="selectLevel(1)">🌱 0-10</button>
-                        <button class="option-btn" onclick="selectLevel(2)">🌿 0-20</button>
-                        <button class="option-btn" onclick="selectLevel(3)">🌳 0-50</button>
-                        <button class="option-btn" onclick="selectLevel(4)">🌲 0-100</button>
+                        <button class="option-btn active" onclick="selectLevel(1)">🌱 初级</button>
+                        <button class="option-btn" onclick="selectLevel(2)">🌿 中级</button>
+                        <button class="option-btn" onclick="selectLevel(3)">🌳 高级</button>
+                        <button class="option-btn" onclick="selectLevel(4)">🌲 专家</button>
                     </div>
                 </div>
                 
@@ -117,10 +123,10 @@
                 <div class="section">
                     <h3>选择难度</h3>
                     <div class="options" id="random-level-options">
-                        <button class="option-btn active" onclick="selectLevel(1)">🌱 0-10</button>
-                        <button class="option-btn" onclick="selectLevel(2)">🌿 0-20</button>
-                        <button class="option-btn" onclick="selectLevel(3)">🌳 0-50</button>
-                        <button class="option-btn" onclick="selectLevel(4)">🌲 0-100</button>
+                        <button class="option-btn active" onclick="selectLevel(1)">🌱 初级</button>
+                        <button class="option-btn" onclick="selectLevel(2)">🌿 中级</button>
+                        <button class="option-btn" onclick="selectLevel(3)">🌳 高级</button>
+                        <button class="option-btn" onclick="selectLevel(4)">🌲 专家</button>
                     </div>
                 </div>
                 
@@ -237,6 +243,7 @@
     <script src="js/modules/oral.js"></script>
     <script src="js/modules/fill.js"></script>
     <script src="js/modules/multi.js"></script>
+    <script src="js/modules/multiplication.js"></script>
     <script src="js/modules/compare.js"></script>
     <script src="js/modules/challenge.js"></script>
     <script src="js/main.js"></script>

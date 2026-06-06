@@ -59,9 +59,21 @@ function generateFillQuestion(level, operation) {
 
 function generateFillQuestions(count, level, operation) {
     const questions = [];
-    for (let i = 0; i < count; i++) {
-        questions.push(generateFillQuestion(level, operation));
+    const usedKeys = new Set();
+    let attempts = 0;
+    const maxAttempts = count * 10;
+
+    while (questions.length < count && attempts < maxAttempts) {
+        attempts++;
+        const question = generateFillQuestion(level, operation);
+        const key = `${question.num1}-${question.op}-${question.num2}`;
+
+        if (!usedKeys.has(key)) {
+            usedKeys.add(key);
+            questions.push(question);
+        }
     }
+
     return questions;
 }
 

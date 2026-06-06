@@ -30,9 +30,21 @@ function generateOralQuestion(level, operation) {
 
 function generateOralQuestions(count, level, operation) {
     const questions = [];
-    for (let i = 0; i < count; i++) {
-        questions.push(generateOralQuestion(level, operation));
+    const usedKeys = new Set();
+    let attempts = 0;
+    const maxAttempts = count * 10;
+
+    while (questions.length < count && attempts < maxAttempts) {
+        attempts++;
+        const question = generateOralQuestion(level, operation);
+        const key = `${question.num1}-${question.op}-${question.num2}`;
+
+        if (!usedKeys.has(key)) {
+            usedKeys.add(key);
+            questions.push(question);
+        }
     }
+
     return questions;
 }
 

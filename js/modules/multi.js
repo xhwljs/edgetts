@@ -61,9 +61,21 @@ function generateMultiQuestion(level, operation) {
 
 function generateMultiQuestions(count, level, operation) {
     const questions = [];
-    for (let i = 0; i < count; i++) {
-        questions.push(generateMultiQuestion(level, operation));
+    const usedKeys = new Set();
+    let attempts = 0;
+    const maxAttempts = count * 10;
+
+    while (questions.length < count && attempts < maxAttempts) {
+        attempts++;
+        const question = generateMultiQuestion(level, operation);
+        const key = `${question.num1}-${question.op}-${question.num2}-${question.num3}`;
+
+        if (!usedKeys.has(key)) {
+            usedKeys.add(key);
+            questions.push(question);
+        }
     }
+
     return questions;
 }
 

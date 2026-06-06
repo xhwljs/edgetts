@@ -234,7 +234,8 @@ function startPractice() {
         'oral': '口算练习',
         'fill': '填空练习',
         'multi': '连加连减',
-        'compare': '比大小'
+        'compare': '比大小',
+        'multiply': '乘法练习'
     };
     practiceType = typeNames[selectedType] || '口算练习';
     
@@ -251,6 +252,9 @@ function startPractice() {
             break;
         case 'compare':
             questions = CompareModule.generateCompareQuestions(selectedCount, selectedLevel);
+            break;
+        case 'multiply':
+            questions = MultiplicationModule.generateQuestions(selectedCount, selectedLevel, selectedOp);
             break;
     }
     
@@ -411,6 +415,80 @@ function loadCurrentQuestion() {
         // 默认显示数字键盘
         document.querySelector('.answer-keypad').style.display = 'block';
     }
+    
+    // 添加学习助手角色
+    createMascot();
+    
+    // 更新角色状态
+    updateMascot();
+}
+
+// 创建学习助手角色
+function createMascot() {
+    const existingMascot = document.querySelector('.mascot');
+    if (existingMascot) return;
+    
+    const mascot = document.createElement('div');
+    mascot.className = 'mascot';
+    mascot.innerHTML = `
+        <div class="mascot-face">😊</div>
+        <div class="mascot-message">加油！你行的！</div>
+    `;
+    
+    const questionArea = document.querySelector('.question-area');
+    if (questionArea && questionArea.parentNode) {
+        questionArea.parentNode.insertBefore(mascot, questionArea.nextSibling);
+    }
+}
+
+// 更新学习助手角色状态
+function updateMascot(type, message) {
+    const mascot = document.querySelector('.mascot');
+    if (!mascot) return;
+    
+    const face = mascot.querySelector('.mascot-face');
+    const msg = mascot.querySelector('.mascot-message');
+    
+    if (type === 'correct') {
+        // 答对时的表情和消息
+        if (consecutiveCorrect >= 10) {
+            face.textContent = '🥳';
+            msg.textContent = '太厉害了！连续答对10题！';
+        } else if (consecutiveCorrect >= 5) {
+            face.textContent = '😄';
+            msg.textContent = '真棒！连续答对5题了！';
+        } else if (consecutiveCorrect >= 3) {
+            face.textContent = '😊';
+            msg.textContent = '做得很好！继续加油！';
+        } else {
+            face.textContent = '😃';
+            msg.textContent = '回答正确！';
+        }
+        mascot.classList.remove('sad');
+        mascot.classList.add('happy');
+    } else if (type === 'wrong') {
+        // 答错时的表情和消息
+        face.textContent = '😟';
+        msg.textContent = message || '没关系，再试一次！';
+        mascot.classList.remove('happy');
+        mascot.classList.add('sad');
+    } else {
+        // 默认状态
+        if (consecutiveCorrect >= 10) {
+            face.textContent = '🥳';
+            msg.textContent = '挑战10连成功！';
+        } else if (consecutiveCorrect >= 5) {
+            face.textContent = '😄';
+            msg.textContent = '5连斩！继续冲！';
+        } else if (consecutiveCorrect >= 3) {
+            face.textContent = '😊';
+            msg.textContent = '3连斩！保持好状态！';
+        } else {
+            face.textContent = '🤔';
+            msg.textContent = '仔细想想哦！';
+        }
+        mascot.classList.remove('happy', 'sad');
+    }
 }
 
 // 数字键盘输入 - 答案直接在问号位置显示
@@ -505,6 +583,7 @@ function submitAnswer() {
             soundType = 'streak';
         }
         showFeedback('correct', message);
+        updateMascot('correct'); // 更新角色状态
         if (soundEnabled) Utils.playSound(soundType);
         
         // 如果是错题重练模式，答对的题目从错题本中移除
@@ -514,7 +593,9 @@ function submitAnswer() {
     } else {
         wrongCount++;
         consecutiveCorrect = 0; // 重置连续答对计数
-        showFeedback('wrong', `${WRONG_MESSAGES[Math.floor(Math.random() * WRONG_MESSAGES.length)]} 正确答案是 ${currentQuestion.answer}`);
+        const wrongMsg = WRONG_MESSAGES[Math.floor(Math.random() * WRONG_MESSAGES.length)];
+        showFeedback('wrong', `${wrongMsg} 正确答案是 ${currentQuestion.answer}`);
+        updateMascot('wrong', wrongMsg); // 更新角色状态
         if (soundEnabled) Utils.playSound('wrong');
         
         // 保存错题（错题重练模式不重复保存）
@@ -1195,6 +1276,212 @@ function loadChallenge() {
     }).join('');
 }
 
+// 限时挑战模式相关变量
+let timedMode = false;
+let timeLimit = 60; // 默认60秒
+let timedInterval = null;
+let timeRemaining = 60;
+
+// 显示限时挑战设置
+function showTimedChallenge() {
+    const modal = document.createElement('div');
+    modal.id = 'timed-modal';
+    modal.className = 'modal show';
+    modal.innerHTML = `
+        <div class="modal-content" style="text-align: center; padding: 20px;">
+            <h3 style="margin-bottom: 20px;">⏱️ 限时挑战</h3>
+            <p style="margin-bottom: 15px; color: #666;">选择时间限制，在规定时间内完成尽可能多的题目！</p>
+            <div style="display: flex; gap: 10px; justify-content: center; margin-bottom: 20px;">
+                <button class="option-btn" onclick="selectTimedMode(30)">30秒</button>
+                <button class="option-btn active" onclick="selectTimedMode(60)">60秒</button>
+                <button class="option-btn" onclick="selectTimedMode(120)">120秒</button>
+            </div>
+            <div style="display: flex; gap: 10px; justify-content: center;">
+                <button class="modal-btn" onclick="closeTimedModal()">取消</button>
+                <button class="modal-btn" style="background: #ff9800;" onclick="startTimedChallenge()">开始挑战</button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+}
+
+// 选择时间模式
+function selectTimedMode(seconds) {
+    timeLimit = seconds;
+    timeRemaining = seconds;
+    const modal = document.getElementById('timed-modal');
+    if (modal) {
+        const buttons = modal.querySelectorAll('.option-btn');
+        buttons.forEach(btn => btn.classList.remove('active'));
+        event.target.classList.add('active');
+    }
+}
+
+// 关闭限时挑战模态框
+function closeTimedModal() {
+    const modal = document.getElementById('timed-modal');
+    if (modal) modal.remove();
+}
+
+// 开始限时挑战
+function startTimedChallenge() {
+    closeTimedModal();
+    timedMode = true;
+    isChallengeMode = false;
+    practiceType = '限时挑战';
+    
+    // 生成10道题
+    currentQuestions = [];
+    for (let i = 0; i < 10; i++) {
+        const rand = Math.random();
+        if (rand < 0.4) {
+            currentQuestions.push(OralModule.generateQuestion(selectedLevel, 'mix'));
+        } else if (rand < 0.7) {
+            currentQuestions.push(FillModule.generateQuestion(selectedLevel, 'mix'));
+        } else {
+            currentQuestions.push(MultiplicationModule.generateQuestion(selectedLevel, 'add'));
+        }
+    }
+    
+    timeRemaining = timeLimit;
+    currentIndex = 0;
+    correctCount = 0;
+    wrongCount = 0;
+    totalTime = 0;
+    startTime = Date.now();
+    userAnswer = '';
+    consecutiveCorrect = 0;
+    maxConsecutive = 0;
+    
+    document.querySelector('.answer-keypad').style.display = 'block';
+    document.querySelector('.compare-buttons').style.display = 'none';
+    
+    if (timedInterval) clearInterval(timedInterval);
+    timedInterval = setInterval(updateTimedMode, 1000);
+    
+    showPage('practice-page');
+    loadCurrentQuestion();
+}
+
+// 更新限时模式
+function updateTimedMode() {
+    timeRemaining--;
+    
+    const timerEl = document.getElementById('timer-display');
+    if (timerEl) {
+        const mins = Math.floor(timeRemaining / 60);
+        const secs = timeRemaining % 60;
+        timerEl.textContent = mins > 0 ? \`\${mins}:\${String(secs).padStart(2, '0')}\` : \`0:\${secs}\`;
+        
+        // 时间警示
+        if (timeRemaining <= 10) {
+            timerEl.style.color = '#f44336';
+        } else if (timeRemaining <= 30) {
+            timerEl.style.color = '#ff9800';
+        } else {
+            timerEl.style.color = '#667eea';
+        }
+    }
+    
+    if (timeRemaining <= 0) {
+        endTimedChallenge();
+    }
+}
+
+// 结束限时挑战
+function endTimedChallenge() {
+    if (timedInterval) {
+        clearInterval(timedInterval);
+        timedInterval = null;
+    }
+    
+    timedMode = false;
+    totalTime = timeLimit - timeRemaining;
+    
+    const user = Storage.getUserData();
+    user.totalCorrect += correctCount;
+    user.totalWrong += wrongCount;
+    user.practiceCount++;
+    
+    const earnedCoins = Math.max(1, correctCount * 2 - wrongCount);
+    user.coins += earnedCoins;
+    
+    const levelUp = Math.floor(user.totalCorrect / 100) + 1;
+    if (levelUp > user.level) {
+        user.level = levelUp;
+    }
+    
+    Storage.saveUserData(user);
+    
+    Storage.addPracticeRecord({
+        date: new Date().toISOString(),
+        type: practiceType,
+        correct: correctCount,
+        total: currentQuestions.length,
+        time: totalTime
+    });
+    
+    Storage.updateDailyTask(1, user.practiceCount);
+    Storage.updateDailyTask(2, user.totalCorrect);
+    
+    updateMedals();
+    
+    showTimedResult(correctCount, wrongCount, totalTime, earnedCoins);
+}
+
+// 显示限时挑战结果
+function showTimedResult(correct, wrong, time, coins) {
+    const resultPage = document.getElementById('result-page');
+    const accuracy = Math.round((correct / currentQuestions.length) * 100);
+    
+    // 根据答对题数给出评价
+    let rating = '';
+    let ratingEmoji = '';
+    if (correct >= 9) {
+        rating = '神级！打破纪录！';
+        ratingEmoji = '🏆';
+    } else if (correct >= 7) {
+        rating = '太棒了！速度飞快！';
+        ratingEmoji = '🎉';
+    } else if (correct >= 5) {
+        rating = '做得不错！继续加油！';
+        ratingEmoji = '👍';
+    } else {
+        rating = '再接再厉！';
+        ratingEmoji = '💪';
+    }
+    
+    resultPage.innerHTML = 
+        '<div class="header">' +
+            '<button class="back-btn" onclick="showPage(\'home-page\')">← 返回首页</button>' +
+        '</div>' +
+        '<div class="result-content">' +
+            '<div class="result-icon">' + ratingEmoji + '</div>' +
+            '<h2>' + rating + '</h2>' +
+            '<div style="font-size: 36px; font-weight: bold; color: #667eea; margin: 15px 0;">' +
+                correct + '/' + currentQuestions.length + ' 题' +
+            '</div>' +
+            '<div style="font-size: 18px; color: #666; margin-bottom: 15px;">用时 ' + formatTime(time) + '</div>' +
+            '<div class="stats">' +
+                '<div class="stat-item">' +
+                    '<span class="stat-value">' + accuracy + '%</span>' +
+                    '<span class="stat-label">正确率</span>' +
+                '</div>' +
+                '<div class="stat-item">' +
+                    '<span class="stat-value">+' + coins + '</span>' +
+                    '<span class="stat-label">获得积分</span>' +
+                '</div>' +
+            '</div>' +
+            '<div class="result-actions">' +
+                (wrong > 0 ? '<button class="result-btn" onclick="showPage(\'wrong-list\')">📝 查看错题 (' + wrong + '题)</button>' : '') +
+                '<button class="result-btn" onclick="showTimedChallenge()">⏱️ 再来一次</button>' +
+                '<button class="result-btn" onclick="showPage(\'home-page\')">🏠 返回首页</button>' +
+            '</div>' +
+        '</div>';
+    
+    showPage('result-page');
+}
+
 // 初始化
 document.addEventListener('DOMContentLoaded', () => {
     // 应用已选主题
@@ -1230,6 +1517,9 @@ window.exportData = exportData;
 window.importData = importData;
 window.buyTheme = buyTheme;
 window.closeAchievementModal = closeAchievementModal;
+window.showTimedChallenge = showTimedChallenge;
+window.selectTimedMode = selectTimedMode;
+window.startTimedChallenge = startTimedChallenge;
 
 // 键盘快捷键支持
 document.addEventListener('keydown', function(e) {
