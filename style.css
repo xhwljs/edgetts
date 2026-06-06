@@ -1948,170 +1948,98 @@ body::before {
     margin-bottom: 20px;
 }
 /* ============================================
-   全新答题页面样式 - 紧凑版
+   简洁答题页面样式
    ============================================ */
 
-/* 练习页面头部 */
-.practice-header {
+.quiz-top {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 8px 10px;
-    background: #fff;
-    border-radius: 16px;
-    margin-bottom: 10px;
-    border: 2px solid #f0f0f0;
+    padding: 10px 8px;
+    margin-bottom: 12px;
 }
 
-.exit-btn {
-    background: #f5f5f5;
+.quiz-back {
+    background: #f0f0f0;
     border: none;
     padding: 8px 14px;
-    border-radius: 20px;
-    font-size: 13px;
-    cursor: pointer;
-    color: #555;
-    font-weight: 600;
-    transition: all 0.2s ease;
-}
-
-.exit-btn:hover {
-    background: #667eea;
-    color: #fff;
-}
-
-.practice-stats {
-    display: flex;
-    gap: 10px;
-    flex: 1;
-    justify-content: center;
-}
-
-.stat-item {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    background: #f8f9ff;
-    padding: 6px 12px;
-    border-radius: 16px;
-    font-size: 12px;
-    font-weight: 600;
-    color: #555;
-}
-
-.stat-icon {
+    border-radius: 18px;
     font-size: 14px;
+    color: #444;
+    cursor: pointer;
 }
 
-.progress-stat strong {
-    color: #667eea;
+.quiz-info {
+    display: flex;
+    gap: 16px;
+    font-size: 14px;
+    color: #666;
+    font-weight: 600;
 }
 
-.timer-stat {
-    color: #764ba2;
-}
-
-.sound-toggle-btn {
-    background: #f8f9ff;
+.quiz-sound {
+    background: #f0f0f0;
     border: none;
+    padding: 8px 12px;
+    border-radius: 50%;
     font-size: 18px;
     cursor: pointer;
-    padding: 6px 10px;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
 
-/* 题目容器 */
-.question-container {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-/* 题目卡片 */
-.question-card {
+.quiz-question {
     background: #fff;
     border-radius: 18px;
-    padding: 12px;
-    border: 2px solid #f0f0f0;
-}
-
-.question-type-badge {
-    display: inline-block;
-    background: #667eea;
-    color: #fff;
-    padding: 4px 12px;
-    border-radius: 14px;
-    font-size: 12px;
-    font-weight: 600;
-    margin-bottom: 10px;
+    padding: 24px 16px;
+    margin-bottom: 12px;
+    border: 2px solid #f5f5f5;
 }
 
 .question-area {
-    min-height: 80px;
+    min-height: 70px;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #f8f9ff;
-    border-radius: 14px;
-    padding: 12px;
 }
 
 .question {
     text-align: center;
-    animation: slideIn 0.2s ease;
-}
-
-@keyframes slideIn {
-    from {
-        opacity: 0;
-        transform: scale(0.95);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
 }
 
 .oral-question {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 12px;
-    font-size: 24px;
+    gap: 14px;
+    font-size: 28px;
 }
 
 .number {
-    font-size: 34px;
-    font-weight: 700;
+    font-size: 40px;
+    font-weight: bold;
     color: #333;
 }
 
 .operator {
-    font-size: 28px;
+    font-size: 32px;
     color: #667eea;
-    font-weight: 700;
+    font-weight: bold;
 }
 
 .equals {
-    font-size: 28px;
-    color: #764ba2;
-    font-weight: 700;
+    font-size: 32px;
+    color: #999;
+    font-weight: bold;
 }
 
 .answer-placeholder {
-    min-width: 60px;
-    height: 48px;
-    background: #fff;
-    border: 2px dashed #b8c0ff;
+    min-width: 65px;
+    height: 50px;
+    background: #f8f8f8;
+    border: 2px dashed #ddd;
     border-radius: 12px;
-    font-size: 28px;
-    font-weight: 700;
-    color: #a8b3ff;
+    font-size: 32px;
+    font-weight: bold;
+    color: #aaa;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -2121,175 +2049,82 @@ body::before {
     border-color: #667eea;
     background: #667eea;
     color: #fff;
-    animation: answerPop 0.2s ease;
 }
 
-@keyframes answerPop {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.08); }
-}
-
-/* 反馈卡片 */
-.feedback-card {
-    min-height: 30px;
-}
-
-.feedback {
-    padding: 8px 14px;
-    border-radius: 12px;
+.quiz-feedback {
+    min-height: 24px;
     text-align: center;
+    padding: 6px 0;
     font-size: 14px;
     font-weight: 600;
     opacity: 0;
-    transition: all 0.2s ease;
 }
 
-.feedback.show {
+.quiz-feedback.show {
     opacity: 1;
 }
 
-.feedback.correct {
-    background: #e8f5e9;
-    color: #2e7d32;
-    border: 1px solid #4caf50;
+.quiz-feedback.correct {
+    color: #4caf50;
 }
 
-.feedback.wrong {
-    background: #ffebee;
-    color: #c62828;
-    border: 1px solid #f44336;
+.quiz-feedback.wrong {
+    color: #f44336;
 }
 
-/* 答题区域 */
-.answer-section {
-    background: #fff;
-    border-radius: 18px;
-    padding: 12px;
-    border: 2px solid #f0f0f0;
+.quiz-answer {
+    margin: 8px 0;
 }
 
-/* 当前答案显示 */
-.current-answer-display {
+.answer-show {
     text-align: center;
+    font-size: 44px;
+    font-weight: bold;
+    color: #667eea;
+    padding: 10px;
+    min-height: 60px;
+}
+
+.quiz-keypad {
+    padding: 4px;
+}
+
+.key-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
     margin-bottom: 10px;
 }
 
-.answer-label {
-    font-size: 11px;
-    color: #999;
-    font-weight: 600;
-    margin-bottom: 4px;
-}
-
-.current-answer {
-    font-size: 36px;
-    font-weight: 700;
-    color: #667eea;
-    min-height: 44px;
-}
-
-/* 数字键盘 */
-.answer-keypad {
-    padding: 0;
-    margin: 0;
-    background: none;
-    border-radius: 0;
-    border: none;
-    box-shadow: none;
-}
-
-.keypad-row {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
-    margin-bottom: 8px;
-}
-
-.keypad-row:last-child {
+.key-row:last-child {
     margin-bottom: 0;
 }
 
-.keypad-btn {
-    height: 52px;
-    border: 2px solid #f0f0f0;
+.key {
+    height: 56px;
+    border: 2px solid #e8e8e8;
     border-radius: 14px;
     background: #fff;
     font-size: 26px;
     font-weight: 600;
     color: #333;
     cursor: pointer;
-    transition: all 0.15s ease;
 }
 
-.keypad-btn:active {
-    background: #f5f5f5;
-    transform: scale(0.96);
+.key:active {
+    background: #f0f0f0;
 }
 
-.keypad-btn.clear-btn {
+.key-clear {
     background: #ffebee;
-    color: #e53935;
-    font-size: 13px;
     border-color: #ffcdd2;
+    color: #d32f2f;
+    font-size: 15px;
 }
 
-.keypad-btn.submit-btn {
+.key-submit {
     background: #667eea;
-    color: #fff;
-    font-size: 13px;
     border-color: #667eea;
-}
-
-/* 比较按钮 */
-.compare-buttons {
-    display: none;
-}
-
-/* 响应式优化 */
-@media (max-width: 420px) {
-    .practice-header {
-        padding: 6px 8px;
-    }
-    
-    .exit-btn {
-        padding: 6px 12px;
-        font-size: 12px;
-    }
-    
-    .stat-item {
-        padding: 5px 10px;
-        font-size: 11px;
-    }
-    
-    .question-card {
-        padding: 10px;
-    }
-    
-    .oral-question {
-        gap: 10px;
-        font-size: 22px;
-    }
-    
-    .number {
-        font-size: 30px;
-    }
-    
-    .operator, .equals {
-        font-size: 26px;
-    }
-    
-    .answer-placeholder {
-        min-width: 54px;
-        height: 44px;
-        font-size: 26px;
-    }
-    
-    .current-answer {
-        font-size: 32px;
-    }
-    
-    .keypad-btn {
-        height: 48px;
-        font-size: 24px;
-    }
+    color: #fff;
+    font-size: 15px;
 }

@@ -371,33 +371,10 @@ function loadCurrentQuestion() {
     userAnswer = '';
     
     const questionArea = document.querySelector('.question-area');
-    const progress = document.querySelector('.progress span');
-    const currentQuestionEl = document.getElementById('current-question');
-    const totalQuestionsEl = document.getElementById('total-questions');
-    const typeBadge = document.querySelector('.question-type-badge');
+    const quizProgress = document.getElementById('quiz-progress');
     
-    if (progress) {
-        progress.textContent = `${currentIndex + 1}/${currentQuestions.length}`;
-    }
-    
-    if (currentQuestionEl) {
-        currentQuestionEl.textContent = currentIndex + 1;
-    }
-    
-    if (totalQuestionsEl) {
-        totalQuestionsEl.textContent = currentQuestions.length;
-    }
-    
-    // 更新题型徽章
-    if (typeBadge) {
-        const typeNames = {
-            'oral': '口算题',
-            'fill': '填空题',
-            'multi': '连加连减',
-            'multiply': '乘法题',
-            'compare': '比大小'
-        };
-        typeBadge.textContent = typeNames[currentQuestion.type] || '数学题';
+    if (quizProgress) {
+        quizProgress.textContent = `${currentIndex + 1}/${currentQuestions.length}`;
     }
     
     // 根据题型渲染不同的题目格式，答案直接在问号位置显示
@@ -409,11 +386,7 @@ function loadCurrentQuestion() {
                     <span class="operator">${currentQuestion.op}</span>
                     <span class="number">${currentQuestion.num2}</span>
                     <span class="equals">=</span>
-                    <span class="number answer-placeholder" id="answer-display" onclick="clearInput()">?</span>
-                </div>
-                <div class="question-tools">
-                    <button class="speak-btn" onclick="speakQuestion()">🔊 读题目</button>
-                    <div class="question-hint">点击答案区域可清除</div>
+                    <span class="answer-placeholder" id="answer-display">?</span>
                 </div>
             </div>
         `;
@@ -421,11 +394,7 @@ function loadCurrentQuestion() {
         questionArea.innerHTML = `
             <div class="question">
                 <div class="fill-question">
-                    <div class="fill-content" id="fill-display">${currentQuestion.content.replace('___', '<span class="answer-placeholder" id="answer-display" onclick="clearInput()">?</span>')}</div>
-                </div>
-                <div class="question-tools">
-                    <button class="speak-btn" onclick="speakQuestion()">🔊 读题目</button>
-                    <div class="question-hint">点击答案区域可清除</div>
+                    <div class="fill-content" id="fill-display">${currentQuestion.content.replace('___', '<span class="answer-placeholder" id="answer-display">?</span>')}</div>
                 </div>
             </div>
         `;
@@ -433,11 +402,7 @@ function loadCurrentQuestion() {
         questionArea.innerHTML = `
             <div class="question">
                 <div class="multi-question">
-                    <div class="multi-content" id="multi-display">${currentQuestion.content.replace('?', '<span class="answer-placeholder" id="answer-display" onclick="clearInput()">?</span>')}</div>
-                </div>
-                <div class="question-tools">
-                    <button class="speak-btn" onclick="speakQuestion()">🔊 读题目</button>
-                    <div class="question-hint">点击答案区域可清除</div>
+                    <div class="multi-content" id="multi-display">${currentQuestion.content.replace('?', '<span class="answer-placeholder" id="answer-display">?</span>')}</div>
                 </div>
             </div>
         `;
@@ -445,21 +410,17 @@ function loadCurrentQuestion() {
         questionArea.innerHTML = `
             <div class="question">
                 <div class="compare-question">
-                    <div class="compare-content" id="compare-display">${currentQuestion.content.replace('?', '<span class="answer-placeholder" id="answer-display">?</span>')}</div>
-                </div>
-                <div class="question-tools">
-                    <button class="speak-btn" onclick="speakQuestion()">🔊 读题目</button>
-                </div>
-                <div class="compare-buttons-inline">
-                    <button class="compare-btn" onclick="inputCompare('>')">&gt;</button>
-                    <button class="compare-btn" onclick="inputCompare('<')">&lt;</button>
+                    <span class="number">${currentQuestion.num1}</span>
+                    <span class="answer-placeholder" id="answer-display">?</span>
+                    <span class="number">${currentQuestion.num2}</span>
                 </div>
             </div>
         `;
-        document.querySelector('.answer-keypad').style.display = 'none';
+        document.querySelector('.quiz-keypad').style.display = 'none';
+        document.querySelector('.compare-buttons').style.display = 'flex';
     } else {
         // 默认显示数字键盘
-        document.querySelector('.answer-keypad').style.display = 'block';
+        document.querySelector('.quiz-keypad').style.display = 'block';
     }
     
     // 添加学习助手角色
@@ -563,10 +524,10 @@ function updateAnswerDisplay() {
         }
     }
     
-    // 更新新的答案显示区域
-    const currentAnswerEl = document.querySelector('.current-answer-display .current-answer');
-    if (currentAnswerEl) {
-        currentAnswerEl.textContent = userAnswer || '0';
+    // 更新底部答案显示区域
+    const answerText = document.getElementById('answer-text');
+    if (answerText) {
+        answerText.textContent = userAnswer || '?';
     }
 }
 
@@ -682,10 +643,10 @@ function toggleSound() {
 
 // 显示反馈
 function showFeedback(type, message) {
-    const feedback = document.querySelector('.feedback');
+    const feedback = document.querySelector('.quiz-feedback');
     if (feedback) {
         feedback.textContent = message;
-        feedback.className = `feedback ${type} show`;
+        feedback.className = `quiz-feedback ${type} show`;
         
         setTimeout(() => {
             feedback.classList.remove('show');

@@ -185,65 +185,47 @@
         </div>
 
         <div id="practice-page" class="page">
-            <div class="practice-header">
-                <button class="exit-btn" onclick="confirmExit()">← 退出</button>
-                <div class="practice-stats">
-                    <div class="stat-item progress-stat">
-                        <span class="stat-icon">📝</span>
-                        <span>第 <strong id="current-question">1</strong> / <strong id="total-questions">10</strong> 题</span>
-                    </div>
-                    <div class="stat-item timer-stat">
-                        <span class="stat-icon">⏱️</span>
-                        <span id="timer-display">0:00</span>
-                    </div>
+            <div class="quiz-top">
+                <button class="quiz-back" onclick="confirmExit()">← 退出</button>
+                <div class="quiz-info">
+                    <span id="quiz-progress">1/10</span>
+                    <span id="quiz-timer">0:00</span>
                 </div>
-                <button id="sound-btn" class="sound-toggle-btn" onclick="toggleSound()">🔊</button>
+                <button id="quiz-sound" class="quiz-sound" onclick="toggleSound()">🔊</button>
             </div>
             
-            <div class="question-container">
-                <div class="question-card">
-                    <div class="question-type-badge">口算题</div>
-                    <div class="question-area"></div>
+            <div class="quiz-question">
+                <div class="question-area"></div>
+            </div>
+            
+            <div class="quiz-feedback"></div>
+            
+            <div class="quiz-answer">
+                <div class="answer-show">
+                    <span id="answer-text">?</span>
                 </div>
-                
-                <div class="feedback-card">
-                    <div class="feedback"></div>
+            </div>
+            
+            <div class="quiz-keypad">
+                <div class="key-row">
+                    <button class="key" onclick="inputNumber(1)">1</button>
+                    <button class="key" onclick="inputNumber(2)">2</button>
+                    <button class="key" onclick="inputNumber(3)">3</button>
                 </div>
-                
-                <div class="answer-section">
-                    <div class="current-answer-display">
-                        <div class="answer-label">当前答案</div>
-                        <div class="current-answer">0</div>
-                    </div>
-                    
-                    <div class="answer-keypad">
-                        <div class="keypad-row">
-                            <button class="keypad-btn number-btn" onclick="inputNumber(1)">1</button>
-                            <button class="keypad-btn number-btn" onclick="inputNumber(2)">2</button>
-                            <button class="keypad-btn number-btn" onclick="inputNumber(3)">3</button>
-                        </div>
-                        <div class="keypad-row">
-                            <button class="keypad-btn number-btn" onclick="inputNumber(4)">4</button>
-                            <button class="keypad-btn number-btn" onclick="inputNumber(5)">5</button>
-                            <button class="keypad-btn number-btn" onclick="inputNumber(6)">6</button>
-                        </div>
-                        <div class="keypad-row">
-                            <button class="keypad-btn number-btn" onclick="inputNumber(7)">7</button>
-                            <button class="keypad-btn number-btn" onclick="inputNumber(8)">8</button>
-                            <button class="keypad-btn number-btn" onclick="inputNumber(9)">9</button>
-                        </div>
-                        <div class="keypad-row">
-                            <button class="keypad-btn action-btn clear-btn" onclick="clearInput()">
-                                <span>⌫</span>
-                                <span>清除</span>
-                            </button>
-                            <button class="keypad-btn number-btn" onclick="inputNumber(0)">0</button>
-                            <button class="keypad-btn action-btn submit-btn" onclick="submitAnswer()">
-                                <span>✓</span>
-                                <span>确定</span>
-                            </button>
-                        </div>
-                    </div>
+                <div class="key-row">
+                    <button class="key" onclick="inputNumber(4)">4</button>
+                    <button class="key" onclick="inputNumber(5)">5</button>
+                    <button class="key" onclick="inputNumber(6)">6</button>
+                </div>
+                <div class="key-row">
+                    <button class="key" onclick="inputNumber(7)">7</button>
+                    <button class="key" onclick="inputNumber(8)">8</button>
+                    <button class="key" onclick="inputNumber(9)">9</button>
+                </div>
+                <div class="key-row">
+                    <button class="key key-clear" onclick="clearInput()">清除</button>
+                    <button class="key" onclick="inputNumber(0)">0</button>
+                    <button class="key key-submit" onclick="submitAnswer()">确定</button>
                 </div>
             </div>
             
