@@ -1977,3 +1977,408 @@ body::before {
     color: #666;
     margin-bottom: 20px;
 }
+/* ============================================
+   全新答题页面样式
+   ============================================ */
+
+/* 练习页面头部 */
+.practice-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 8px;
+    background: linear-gradient(135deg, #f8f9ff 0%, #f0f4ff 100%);
+    border-radius: 20px;
+    margin-bottom: 16px;
+    border: 2px solid #e8e8ff;
+}
+
+.exit-btn {
+    background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
+    border: none;
+    padding: 10px 18px;
+    border-radius: 25px;
+    font-size: 14px;
+    cursor: pointer;
+    color: #333;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.exit-btn:hover {
+    transform: translateX(-3px);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+}
+
+.exit-btn:active {
+    transform: scale(0.95);
+}
+
+.practice-stats {
+    display: flex;
+    gap: 12px;
+    flex: 1;
+    justify-content: center;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #fff;
+    padding: 8px 14px;
+    border-radius: 18px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #555;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.stat-icon {
+    font-size: 16px;
+}
+
+.progress-stat strong {
+    color: #667eea;
+}
+
+.timer-stat {
+    color: #764ba2;
+}
+
+.sound-toggle-btn {
+    background: #fff;
+    border: 2px solid #e8e8ff;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 8px 12px;
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.sound-toggle-btn:hover {
+    transform: scale(1.1);
+    background: #f8f9ff;
+}
+
+.sound-toggle-btn:active {
+    transform: scale(0.9);
+}
+
+/* 题目容器 */
+.question-container {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+/* 题目卡片 */
+.question-card {
+    background: linear-gradient(145deg, #f8f9ff 0%, #f0f4ff 100%);
+    border-radius: 24px;
+    padding: 20px;
+    border: 2px solid #e8e8ff;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.12);
+    position: relative;
+    overflow: hidden;
+}
+
+.question-type-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 14px;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.25);
+}
+
+.question-area {
+    min-height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.question {
+    text-align: center;
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.oral-question {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    font-size: 28px;
+}
+
+.number {
+    font-size: 42px;
+    font-weight: 800;
+    color: #333;
+}
+
+.operator {
+    font-size: 34px;
+    color: #667eea;
+    font-weight: 800;
+}
+
+.equals {
+    font-size: 34px;
+    color: #764ba2;
+    font-weight: 800;
+}
+
+.answer-placeholder {
+    min-width: 80px;
+    height: 60px;
+    background: #f8f9ff;
+    border: 3px dashed #b8c0ff;
+    border-radius: 16px;
+    font-size: 36px;
+    font-weight: 800;
+    color: #a8b3ff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.answer-placeholder.has-answer {
+    border-color: #667eea;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+    animation: answerPop 0.3s ease;
+}
+
+@keyframes answerPop {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+/* 反馈卡片 */
+.feedback-card {
+    min-height: 60px;
+}
+
+.feedback {
+    padding: 14px 20px;
+    border-radius: 18px;
+    text-align: center;
+    font-size: 17px;
+    font-weight: 700;
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.feedback.show {
+    opacity: 1;
+}
+
+.feedback.correct {
+    background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+    color: #155724;
+    border: 2px solid #28a745;
+    animation: bounce 0.5s ease;
+}
+
+.feedback.wrong {
+    background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+    color: #721c24;
+    border: 2px solid #dc3545;
+    animation: shake 0.5s ease;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-10px); }
+    75% { transform: translateX(10px); }
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+/* 答题区域 */
+.answer-section {
+    background: linear-gradient(145deg, #f8f9ff 0%, #f0f4ff 100%);
+    border-radius: 24px;
+    padding: 16px;
+    border: 2px solid #e8e8ff;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.1);
+}
+
+/* 当前答案显示 */
+.current-answer-display {
+    text-align: center;
+    margin-bottom: 16px;
+    padding-bottom: 14px;
+    border-bottom: 2px solid #e8e8ff;
+}
+
+.answer-label {
+    font-size: 13px;
+    color: #888;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.current-answer {
+    font-size: 48px;
+    font-weight: 800;
+    color: #667eea;
+    min-height: 60px;
+    text-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
+}
+
+/* 数字键盘 */
+.answer-keypad {
+    padding: 0;
+    margin: 0;
+    background: none;
+    border-radius: 0;
+    border: none;
+    box-shadow: none;
+}
+
+.keypad-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.keypad-row:last-child {
+    margin-bottom: 0;
+}
+
+.keypad-btn {
+    height: 65px;
+    border: none;
+    border-radius: 18px;
+    background: #fff;
+    font-size: 30px;
+    font-weight: 700;
+    color: #333;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.keypad-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(102, 126, 234, 0.2);
+}
+
+.keypad-btn:active {
+    transform: scale(0.95);
+}
+
+.keypad-btn.clear-btn {
+    background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+    color: #e53935;
+    font-size: 14px;
+    gap: 4px;
+}
+
+.keypad-btn.clear-btn:hover {
+    box-shadow: 0 6px 16px rgba(229, 57, 53, 0.25);
+}
+
+.keypad-btn.submit-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+    font-size: 14px;
+    gap: 4px;
+}
+
+.keypad-btn.submit-btn:hover {
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.35);
+}
+
+/* 比较按钮 */
+.compare-buttons {
+    display: none;
+}
+
+/* 响应式优化 */
+@media (max-width: 420px) {
+    .practice-header {
+        padding: 10px 6px;
+    }
+    
+    .exit-btn {
+        padding: 8px 14px;
+        font-size: 13px;
+    }
+    
+    .stat-item {
+        padding: 6px 10px;
+        font-size: 12px;
+    }
+    
+    .question-card {
+        padding: 16px;
+    }
+    
+    .oral-question {
+        gap: 12px;
+        font-size: 24px;
+    }
+    
+    .number {
+        font-size: 36px;
+    }
+    
+    .operator, .equals {
+        font-size: 30px;
+    }
+    
+    .answer-placeholder {
+        min-width: 65px;
+        height: 52px;
+        font-size: 30px;
+    }
+    
+    .current-answer {
+        font-size: 40px;
+    }
+    
+    .keypad-btn {
+        height: 58px;
+        font-size: 26px;
+    }
+}

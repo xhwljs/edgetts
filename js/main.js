@@ -372,9 +372,32 @@ function loadCurrentQuestion() {
     
     const questionArea = document.querySelector('.question-area');
     const progress = document.querySelector('.progress span');
+    const currentQuestionEl = document.getElementById('current-question');
+    const totalQuestionsEl = document.getElementById('total-questions');
+    const typeBadge = document.querySelector('.question-type-badge');
     
     if (progress) {
         progress.textContent = `${currentIndex + 1}/${currentQuestions.length}`;
+    }
+    
+    if (currentQuestionEl) {
+        currentQuestionEl.textContent = currentIndex + 1;
+    }
+    
+    if (totalQuestionsEl) {
+        totalQuestionsEl.textContent = currentQuestions.length;
+    }
+    
+    // 更新题型徽章
+    if (typeBadge) {
+        const typeNames = {
+            'oral': '口算题',
+            'fill': '填空题',
+            'multi': '连加连减',
+            'multiply': '乘法题',
+            'compare': '比大小'
+        };
+        typeBadge.textContent = typeNames[currentQuestion.type] || '数学题';
     }
     
     // 根据题型渲染不同的题目格式，答案直接在问号位置显示
@@ -538,6 +561,12 @@ function updateAnswerDisplay() {
         } else {
             displayEl.classList.remove('has-answer');
         }
+    }
+    
+    // 更新新的答案显示区域
+    const currentAnswerEl = document.querySelector('.current-answer-display .current-answer');
+    if (currentAnswerEl) {
+        currentAnswerEl.textContent = userAnswer || '0';
     }
 }
 
