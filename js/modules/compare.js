@@ -1,5 +1,10 @@
-function generateCompareQuestion(level) {
-    const range = Utils.calculateDifficultyRange(level);
+function generateCompareQuestion(levelOrRange) {
+    let range;
+    if (typeof levelOrRange === 'object' && levelOrRange.min !== undefined) {
+        range = levelOrRange;
+    } else {
+        range = Utils.calculateDifficultyRange(levelOrRange);
+    }
     let num1, num2, answer;
     
     num1 = Utils.getRandomInt(range.min, range.max);
@@ -25,10 +30,10 @@ function generateCompareQuestion(level) {
     };
 }
 
-function generateCompareQuestions(count, level) {
+function generateCompareQuestions(count, levelOrRange) {
     const questions = [];
     for (let i = 0; i < count; i++) {
-        questions.push(generateCompareQuestion(level));
+        questions.push(generateCompareQuestion(levelOrRange));
     }
     return questions;
 }

@@ -50,6 +50,9 @@
             <button class="action-btn" onclick="showPage('wrong-list')">
                 <span>📝 错题本</span>
             </button>
+            <button class="action-btn" onclick="showPage('study-history')">
+                <span>📊 学习记录</span>
+            </button>
             <button class="action-btn" onclick="showPage('medals')">
                 <span>🏅 我的勋章</span>
             </button>
@@ -87,6 +90,22 @@
                         <button class="option-btn" onclick="selectLevel(2)">🌿 中级</button>
                         <button class="option-btn" onclick="selectLevel(3)">🌳 高级</button>
                         <button class="option-btn" onclick="selectLevel(4)">🌲 专家</button>
+                        <button class="option-btn" onclick="selectLevel('custom')">🎨 自定义</button>
+                    </div>
+                </div>
+                
+                <div class="section" id="custom-range-section" style="display: none;">
+                    <h3>设置数字范围</h3>
+                    <div style="display: flex; gap: 15px; align-items: center; justify-content: center; flex-wrap: wrap;">
+                        <div style="display: flex; flex-direction: column; gap: 5px;">
+                            <label style="font-size: 14px; color: #666;">最小</label>
+                            <input type="number" id="custom-min" value="0" min="0" max="1000" style="padding: 10px; width: 80px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 16px; text-align: center;">
+                        </div>
+                        <span style="font-size: 24px; color: #999;">~</span>
+                        <div style="display: flex; flex-direction: column; gap: 5px;">
+                            <label style="font-size: 14px; color: #666;">最大</label>
+                            <input type="number" id="custom-max" value="20" min="1" max="1000" style="padding: 10px; width: 80px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 16px; text-align: center;">
+                        </div>
                     </div>
                 </div>
                 
@@ -235,6 +254,14 @@
                 <span class="coins">💰 0</span>
             </div>
             <div class="shop-content"></div>
+        </div>
+
+        <div id="study-history" class="page">
+            <div class="header">
+                <button class="back-btn" onclick="showPage('home-page')">← 返回</button>
+                <h2>📊 学习记录</h2>
+            </div>
+            <div class="history-content"></div>
         </div>
     </div>
 

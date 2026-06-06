@@ -1,7 +1,7 @@
 // 乘法练习模块
 const MultiplicationModule = {
     // 生成题目
-    generateQuestions(count, level, op) {
+    generateQuestions(count, levelOrRange, op) {
         const questions = [];
         const usedKeys = new Set();
         let attempts = 0;
@@ -9,7 +9,7 @@ const MultiplicationModule = {
 
         while (questions.length < count && attempts < maxAttempts) {
             attempts++;
-            const question = this.generateQuestion(level, op);
+            const question = this.generateQuestion(levelOrRange, op);
             const key = `${question.num1}-${question.op}-${question.num2}`;
 
             if (!usedKeys.has(key)) {
@@ -22,9 +22,14 @@ const MultiplicationModule = {
     },
 
     // 生成单道题目
-    generateQuestion(level, op) {
+    generateQuestion(levelOrRange, op) {
         let num1, num2, answer;
-        const max = [5, 9, 12, 20][level - 1] || 9;
+        let max;
+        if (typeof levelOrRange === 'object' && levelOrRange.min !== undefined) {
+            max = Math.min(levelOrRange.max, 20);
+        } else {
+            max = [5, 9, 12, 20][levelOrRange - 1] || 9;
+        }
         
         num1 = Utils.getRandomInt(1, max);
         num2 = Utils.getRandomInt(1, 9);
@@ -49,8 +54,14 @@ const MultiplicationModule = {
     },
 
     // 生成填空题
-    generateFillQuestion(level) {
-        const num1 = Utils.getRandomInt(1, 9);
+    generateFillQuestion(levelOrRange) {
+        let max;
+        if (typeof levelOrRange === 'object' && levelOrRange.min !== undefined) {
+            max = Math.min(levelOrRange.max, 20);
+        } else {
+            max = [5, 9, 12, 20][levelOrRange - 1] || 9;
+        }
+        const num1 = Utils.getRandomInt(1, max);
         const num2 = Utils.getRandomInt(1, 9);
         const answer = num1 * num2;
         const positions = ['first', 'second', 'result'];
@@ -77,16 +88,21 @@ const MultiplicationModule = {
     },
 
     // 生成比较题
-    generateCompareQuestions(count, level) {
+    generateCompareQuestions(count, levelOrRange) {
         const questions = [];
         for (let i = 0; i < count; i++) {
-            questions.push(this.generateCompareQuestion(level));
+            questions.push(this.generateCompareQuestion(levelOrRange));
         }
         return questions;
     },
 
-    generateCompareQuestion(level) {
-        const max = [5, 9, 12, 20][level - 1] || 9;
+    generateCompareQuestion(levelOrRange) {
+        let max;
+        if (typeof levelOrRange === 'object' && levelOrRange.min !== undefined) {
+            max = Math.min(levelOrRange.max, 20);
+        } else {
+            max = [5, 9, 12, 20][levelOrRange - 1] || 9;
+        }
         const num1 = Utils.getRandomInt(1, max) * Utils.getRandomInt(1, 5);
         const num2 = Utils.getRandomInt(1, max) * Utils.getRandomInt(1, 5);
         const correct = num1 > num2 ? '>' : (num1 < num2 ? '<' : '=');

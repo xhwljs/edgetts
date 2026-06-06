@@ -565,12 +565,6 @@ body {
     50% { transform: scale(1.05); }
 }
 
-@keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-5px); }
-    75% { transform: translateX(5px); }
-}
-
 .progress {
     font-size: 16px;
     color: #666;
@@ -1386,39 +1380,61 @@ body {
 /* 学习助手角色样式 */
 .mascot {
     text-align: center;
-    padding: 15px;
-    margin: 10px 0;
+    padding: 18px 15px;
+    margin: 12px 0;
     background: linear-gradient(135deg, #f8f9ff 0%, #e8eeff 100%);
-    border-radius: 15px;
-    box-shadow: 0 2px 10px rgba(102, 126, 234, 0.15);
+    border-radius: 20px;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.mascot::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
+    animation: sparkle 3s ease-in-out infinite;
 }
 
 .mascot-face {
-    font-size: 48px;
+    font-size: 56px;
     animation: breathe 2s ease-in-out infinite;
-    transition: all 0.3s;
+    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
     display: inline-block;
+    position: relative;
+    z-index: 1;
 }
 
 .mascot-message {
     font-size: 16px;
     color: #667eea;
-    margin-top: 8px;
+    margin-top: 10px;
     font-weight: bold;
+    position: relative;
+    z-index: 1;
 }
 
 @keyframes breathe {
     0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.05); }
+    50% { transform: scale(1.08); }
+}
+
+@keyframes sparkle {
+    0%, 100% { opacity: 0; transform: rotate(0deg); }
+    50% { opacity: 1; transform: rotate(180deg); }
 }
 
 @keyframes bounce {
     0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
+    50% { transform: translateY(-15px); }
 }
 
 .mascot.happy .mascot-face {
-    animation: jump 0.5s ease;
+    animation: jump 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 
 .mascot.sad .mascot-face {
@@ -1426,12 +1442,140 @@ body {
 }
 
 @keyframes jump {
-    0%, 100% { transform: translateY(0) scale(1); }
-    50% { transform: translateY(-20px) scale(1.1); }
+    0% { transform: translateY(0) scale(1) rotate(0deg); }
+    30% { transform: translateY(-30px) scale(1.2) rotate(-5deg); }
+    50% { transform: translateY(-35px) scale(1.25) rotate(5deg); }
+    70% { transform: translateY(-20px) scale(1.15) rotate(-3deg); }
+    100% { transform: translateY(0) scale(1) rotate(0deg); }
 }
 
 @keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-5px); }
-    75% { transform: translateX(5px); }
+    0%, 100% { transform: translateX(0) rotate(0deg); }
+    20% { transform: translateX(-12px) rotate(-5deg); }
+    40% { transform: translateX(12px) rotate(5deg); }
+    60% { transform: translateX(-8px) rotate(-3deg); }
+    80% { transform: translateX(8px) rotate(3deg); }
+}
+
+@keyframes coinFall {
+    0% {
+        transform: translateY(-50px) rotate(0deg);
+        opacity: 1;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(100vh) rotate(720deg);
+        opacity: 0;
+    }
+}
+
+/* 学习记录页面样式 */
+.history-content {
+    padding: 8px;
+}
+
+.stats-summary {
+    margin-bottom: 25px;
+}
+
+.stats-summary h3,
+.history-list h3 {
+    font-size: 16px;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.stats-summary .stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.stats-summary .stat-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 18px 12px;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.stats-summary .stat-icon {
+    font-size: 30px;
+    margin-bottom: 8px;
+}
+
+.stats-summary .stat-value {
+    display: block;
+    font-size: 24px;
+    font-weight: bold;
+    color: white;
+    margin-bottom: 4px;
+}
+
+.stats-summary .stat-label {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.history-item {
+    background: #f5f5f5;
+    padding: 15px;
+    border-radius: 12px;
+    transition: all 0.2s;
+}
+
+.history-item:active {
+    transform: scale(0.98);
+}
+
+.history-date {
+    font-size: 13px;
+    color: #999;
+    margin-bottom: 8px;
+}
+
+.history-info {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.history-type {
+    font-size: 15px;
+    font-weight: bold;
+    color: #333;
+}
+
+.history-result {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.history-time {
+    font-size: 13px;
+    color: #666;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.empty-icon {
+    font-size: 60px;
+    margin-bottom: 15px;
+}
+
+.empty-state p {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 20px;
 }

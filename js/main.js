@@ -42,6 +42,8 @@ function showPage(pageId) {
         loadChallenge();
     } else if (pageId === 'medals') {
         loadMedals();
+    } else if (pageId === 'study-history') {
+        loadStudyHistory();
     }
 }
 
@@ -177,6 +179,24 @@ function selectLevel(level) {
     selectedLevel = level;
     updateOptionButtons('level-options', level);
     updateOptionButtons('random-level-options', level);
+    
+    // 显示/隐藏自定义范围设置
+    const customSection = document.getElementById('custom-range-section');
+    if (customSection) {
+        customSection.style.display = level === 'custom' ? 'block' : 'none';
+    }
+}
+
+// 获取当前难度范围
+function getCurrentDifficultyRange() {
+    if (selectedLevel === 'custom') {
+        const minInput = document.getElementById('custom-min');
+        const maxInput = document.getElementById('custom-max');
+        const min = minInput ? parseInt(minInput.value) || 0 : 0;
+        const max = maxInput ? parseInt(maxInput.value) || 20 : 20;
+        return { min: Math.min(min, max), max: Math.max(min, max) };
+    }
+    return Utils.calculateDifficultyRange(selectedLevel);
 }
 
 // 选择运算类型
@@ -213,6 +233,7 @@ function updateOptionButtons(containerId, value) {
                 (value === 'oral' && text.includes('口算')) ||
                 (value === 'fill' && text.includes('填空')) ||
                 (value === 'multi' && text.includes('连加')) ||
+                (value === 'custom' && text.includes('自定义')) ||
                 (value === 'add' && text.includes('加法') && !text.includes('连')) ||
                 (value === 'sub' && text.includes('减法') && !text.includes('连')) ||
                 (value === 'mix' && text.includes('混合'))) {
@@ -239,22 +260,23 @@ function startPractice() {
     };
     practiceType = typeNames[selectedType] || '口算练习';
     
+    const levelOrRange = getCurrentDifficultyRange();
     let questions = [];
     switch (selectedType) {
         case 'oral':
-            questions = OralModule.generateQuestions(selectedCount, selectedLevel, selectedOp);
+            questions = OralModule.generateQuestions(selectedCount, levelOrRange, selectedOp);
             break;
         case 'fill':
-            questions = FillModule.generateQuestions(selectedCount, selectedLevel, selectedOp);
+            questions = FillModule.generateQuestions(selectedCount, levelOrRange, selectedOp);
             break;
         case 'multi':
-            questions = MultiModule.generateQuestions(selectedCount, selectedLevel, selectedOp);
+            questions = MultiModule.generateQuestions(selectedCount, levelOrRange, selectedOp);
             break;
         case 'compare':
-            questions = CompareModule.generateCompareQuestions(selectedCount, selectedLevel);
+            questions = CompareModule.generateCompareQuestions(selectedCount, levelOrRange);
             break;
         case 'multiply':
-            questions = MultiplicationModule.generateQuestions(selectedCount, selectedLevel, selectedOp);
+            questions = MultiplicationModule.generateQuestions(selectedCount, levelOrRange, selectedOp);
             break;
     }
     
@@ -267,24 +289,25 @@ function startRandomPractice() {
     isChallengeMode = false;
     practiceType = '随机混合练习';
     
+    const levelOrRange = getCurrentDifficultyRange();
     const questions = [];
     const perType = Math.ceil(selectedCount / 4);
     
     // 确保每种题型至少出一道
-    questions.push(OralModule.generateQuestion(selectedLevel, 'add'));
-    questions.push(OralModule.generateQuestion(selectedLevel, 'sub'));
-    questions.push(FillModule.generateQuestion(selectedLevel, 'add'));
-    questions.push(FillModule.generateQuestion(selectedLevel, 'sub'));
+    questions.push(OralModule.generateQuestion(levelOrRange, 'add'));
+    questions.push(OralModule.generateQuestion(levelOrRange, 'sub'));
+    questions.push(FillModule.generateQuestion(levelOrRange, 'add'));
+    questions.push(FillModule.generateQuestion(levelOrRange, 'sub'));
     
     // 填充剩余题目
     for (let i = 4; i < selectedCount; i++) {
         const rand = Math.random();
         if (rand < 0.33) {
-            questions.push(OralModule.generateQuestion(selectedLevel, 'mix'));
+            questions.push(OralModule.generateQuestion(levelOrRange, 'mix'));
         } else if (rand < 0.66) {
-            questions.push(FillModule.generateQuestion(selectedLevel, 'mix'));
+            questions.push(FillModule.generateQuestion(levelOrRange, 'mix'));
         } else {
-            questions.push(MultiModule.generateQuestion(selectedLevel, 'mix'));
+            questions.push(MultiModule.generateQuestion(levelOrRange, 'mix'));
         }
     }
     
@@ -838,6 +861,48 @@ function showResult(correct, wrong, time, coins) {
         '</div>';
     
     showPage('result-page');
+    
+    // 播放奖励动画
+    if (coins > 0 || bonusCoins > 0) {
+        const totalCoins = coins + bonusCoins;
+        playCoinAnimation(totalCoins);
+    }
+}
+
+// 金币雨动画
+function playCoinAnimation(coinCount) {
+    const container = document.createElement('div');
+    container.className = 'coin-container';
+    container.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999;';
+    document.body.appendChild(container);
+    
+    const numCoins = Math.min(coinCount, 30);
+    
+    for (let i = 0; i < numCoins; i++) {
+        setTimeout(() => {
+            const coin = document.createElement('div');
+            coin.className = 'coin';
+            coin.innerHTML = '💰';
+            coin.style.cssText = `
+                position: absolute;
+                left: ${Math.random() * 100}%;
+                top: -50px;
+                font-size: ${24 + Math.random() * 16}px;
+                animation: coinFall ${1.5 + Math.random() * 1.5}s ease-in forwards;
+            `;
+            container.appendChild(coin);
+            
+            // 动画结束后移除金币
+            setTimeout(() => {
+                coin.remove();
+            }, 3000);
+        }, i * 100);
+    }
+    
+    // 清理容器
+    setTimeout(() => {
+        container.remove();
+    }, 3500);
 }
 
 // 格式化时间
@@ -1371,7 +1436,7 @@ function updateTimedMode() {
     if (timerEl) {
         const mins = Math.floor(timeRemaining / 60);
         const secs = timeRemaining % 60;
-        timerEl.textContent = mins > 0 ? \`\${mins}:\${String(secs).padStart(2, '0')}\` : \`0:\${secs}\`;
+        timerEl.textContent = mins > 0 ? `${mins}:${String(secs).padStart(2, '0')}` : `0:${secs}`;
         
         // 时间警示
         if (timeRemaining <= 10) {
@@ -1480,6 +1545,91 @@ function showTimedResult(correct, wrong, time, coins) {
         '</div>';
     
     showPage('result-page');
+    
+    // 播放奖励动画
+    if (coins > 0) {
+        playCoinAnimation(coins);
+    }
+}
+
+// 学习记录页面
+function loadStudyHistory() {
+    const history = Storage.getPracticeHistory();
+    const user = Storage.getUserData();
+    const historyContent = document.querySelector('.history-content');
+    
+    // 计算统计数据
+    const totalQuestions = history.reduce((sum, r) => sum + r.total, 0);
+    const totalCorrect = history.reduce((sum, r) => sum + r.correct, 0);
+    const totalTime = history.reduce((sum, r) => sum + r.time, 0);
+    const accuracy = history.length > 0 ? Math.round((totalCorrect / totalQuestions) * 100) : 0;
+    
+    const typeNames = {
+        'oral': '口算题',
+        'fill': '填空题',
+        'multi': '连加连减',
+        'multiply': '乘法练习',
+        'compare': '比大小',
+        'random': '随机混合',
+        'challenge': '挑战模式',
+        'timed': '限时挑战'
+    };
+    
+    historyContent.innerHTML = `
+        <div class="stats-summary">
+            <h3>📈 学习统计</h3>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">📝</div>
+                    <div class="stat-value">${history.length}</div>
+                    <div class="stat-label">练习次数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">✅</div>
+                    <div class="stat-value">${totalCorrect}</div>
+                    <div class="stat-label">答对题数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">⏱️</div>
+                    <div class="stat-value">${formatTime(totalTime)}</div>
+                    <div class="stat-label">累计用时</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🎯</div>
+                    <div class="stat-value">${accuracy}%</div>
+                    <div class="stat-label">平均正确率</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="history-list">
+            <h3>📋 练习记录</h3>
+            ${history.length === 0 ? `
+                <div class="empty-state">
+                    <div class="empty-icon">📚</div>
+                    <p>还没有练习记录</p>
+                    <button class="start-btn" onclick="showPage('custom-practice')">开始第一次练习</button>
+                </div>
+            ` : history.map((record, index) => {
+                const date = new Date(record.date);
+                const dateStr = date.toLocaleDateString('zh-CN', { month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+                const acc = Math.round((record.correct / record.total) * 100);
+                const accColor = acc >= 80 ? '#4caf50' : acc >= 60 ? '#ff9800' : '#f44336';
+                return `
+                    <div class="history-item">
+                        <div class="history-date">${dateStr}</div>
+                        <div class="history-info">
+                            <div class="history-type">${typeNames[record.type] || record.type}</div>
+                            <div class="history-result" style="color: ${accColor}">
+                                ${record.correct}/${record.total} 题 (${acc}%)
+                            </div>
+                            <div class="history-time">用时 ${formatTime(record.time)}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('')}
+        </div>
+    `;
 }
 
 // 初始化

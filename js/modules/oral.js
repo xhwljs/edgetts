@@ -1,5 +1,10 @@
-function generateOralQuestion(level, operation) {
-    const range = Utils.calculateDifficultyRange(level);
+function generateOralQuestion(levelOrRange, operation) {
+    let range;
+    if (typeof levelOrRange === 'object' && levelOrRange.min !== undefined) {
+        range = levelOrRange;
+    } else {
+        range = Utils.calculateDifficultyRange(levelOrRange);
+    }
     let num1, num2, op, answer;
     
     if (operation === 'mix') {
@@ -28,7 +33,7 @@ function generateOralQuestion(level, operation) {
     };
 }
 
-function generateOralQuestions(count, level, operation) {
+function generateOralQuestions(count, levelOrRange, operation) {
     const questions = [];
     const usedKeys = new Set();
     let attempts = 0;
@@ -36,7 +41,7 @@ function generateOralQuestions(count, level, operation) {
 
     while (questions.length < count && attempts < maxAttempts) {
         attempts++;
-        const question = generateOralQuestion(level, operation);
+        const question = generateOralQuestion(levelOrRange, operation);
         const key = `${question.num1}-${question.op}-${question.num2}`;
 
         if (!usedKeys.has(key)) {

@@ -1,5 +1,10 @@
-function generateFillQuestion(level, operation) {
-    const range = Utils.calculateDifficultyRange(level);
+function generateFillQuestion(levelOrRange, operation) {
+    let range;
+    if (typeof levelOrRange === 'object' && levelOrRange.min !== undefined) {
+        range = levelOrRange;
+    } else {
+        range = Utils.calculateDifficultyRange(levelOrRange);
+    }
     let content, answer, num1, num2, op;
     
     if (operation === 'mix') {
@@ -57,7 +62,7 @@ function generateFillQuestion(level, operation) {
     };
 }
 
-function generateFillQuestions(count, level, operation) {
+function generateFillQuestions(count, levelOrRange, operation) {
     const questions = [];
     const usedKeys = new Set();
     let attempts = 0;
@@ -65,7 +70,7 @@ function generateFillQuestions(count, level, operation) {
 
     while (questions.length < count && attempts < maxAttempts) {
         attempts++;
-        const question = generateFillQuestion(level, operation);
+        const question = generateFillQuestion(levelOrRange, operation);
         const key = `${question.num1}-${question.op}-${question.num2}`;
 
         if (!usedKeys.has(key)) {

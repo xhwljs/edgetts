@@ -1,6 +1,11 @@
 // 连加连减题型模块
-function generateMultiQuestion(level, operation) {
-    const range = Utils.calculateDifficultyRange(level);
+function generateMultiQuestion(levelOrRange, operation) {
+    let range;
+    if (typeof levelOrRange === 'object' && levelOrRange.min !== undefined) {
+        range = levelOrRange;
+    } else {
+        range = Utils.calculateDifficultyRange(levelOrRange);
+    }
     let nums = [];
     let ops = [];
     let answer;
@@ -59,7 +64,7 @@ function generateMultiQuestion(level, operation) {
     };
 }
 
-function generateMultiQuestions(count, level, operation) {
+function generateMultiQuestions(count, levelOrRange, operation) {
     const questions = [];
     const usedKeys = new Set();
     let attempts = 0;
@@ -67,7 +72,7 @@ function generateMultiQuestions(count, level, operation) {
 
     while (questions.length < count && attempts < maxAttempts) {
         attempts++;
-        const question = generateMultiQuestion(level, operation);
+        const question = generateMultiQuestion(levelOrRange, operation);
         const key = `${question.num1}-${question.op}-${question.num2}-${question.num3}`;
 
         if (!usedKeys.has(key)) {
