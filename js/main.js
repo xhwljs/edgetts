@@ -338,8 +338,14 @@ function startPracticeSession() {
     maxConsecutive = 0;
     
     // 重置键盘显示状态
-    document.querySelector('.answer-keypad').style.display = 'block';
-    document.querySelector('.compare-buttons').style.display = 'none';
+    const quizKeypad = document.querySelector('.quiz-keypad');
+    if (quizKeypad) {
+        quizKeypad.style.display = 'block';
+    }
+    const compareButtons = document.querySelector('.compare-buttons');
+    if (compareButtons) {
+        compareButtons.style.display = 'none';
+    }
     
     // 启动计时器
     if (timerInterval) clearInterval(timerInterval);
@@ -416,18 +422,21 @@ function loadCurrentQuestion() {
                 </div>
             </div>
         `;
-        document.querySelector('.quiz-keypad').style.display = 'none';
-        document.querySelector('.compare-buttons').style.display = 'flex';
+        const quizKeypad = document.querySelector('.quiz-keypad');
+        if (quizKeypad) {
+            quizKeypad.style.display = 'none';
+        }
+        const compareButtons = document.querySelector('.compare-buttons');
+        if (compareButtons) {
+            compareButtons.style.display = 'flex';
+        }
     } else {
         // 默认显示数字键盘
-        document.querySelector('.quiz-keypad').style.display = 'block';
+        const quizKeypad = document.querySelector('.quiz-keypad');
+        if (quizKeypad) {
+            quizKeypad.style.display = 'block';
+        }
     }
-    
-    // 添加学习助手角色
-    createMascot();
-    
-    // 更新角色状态
-    updateMascot();
 }
 
 // 创建学习助手角色
