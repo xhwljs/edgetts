@@ -354,7 +354,7 @@ function updateTimer() {
     const elapsed = Math.floor((Date.now() - startTime) / 1000);
     const mins = Math.floor(elapsed / 60);
     const secs = elapsed % 60;
-    const timerEl = document.getElementById('timer-display');
+    const timerEl = document.getElementById('quiz-timer');
     if (timerEl) {
         timerEl.textContent = `${mins}:${String(secs).padStart(2, '0')}`;
     }
