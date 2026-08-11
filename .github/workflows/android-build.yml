@@ -24,9 +24,13 @@ jobs:
           distribution: 'temurin'
 
       - name: 配置 Gradle 8.2
+        id: gradle-setup
         uses: gradle/actions/setup-gradle@v3
         with:
           gradle-version: '8.2'
+
+      - name: 验证 Gradle 版本
+        run: gradle --version
 
       - name: 配置 Android SDK
         uses: android-actions/setup-android@v3
@@ -35,17 +39,11 @@ jobs:
             platforms;android-34
             build-tools;34.0.0
 
-      - name: 生成 Gradle Wrapper（仓库未提交二进制 jar）
-        run: gradle wrapper --gradle-version 8.2
-
-      - name: 授予 gradlew 执行权限
-        run: chmod +x ./gradlew
-
       - name: 编译 Debug APK
-        run: ./gradlew assembleDebug --no-daemon --stacktrace
+        run: gradle assembleDebug --no-daemon --stacktrace
 
       - name: 编译 Release APK（未签名）
-        run: ./gradlew assembleRelease --no-daemon --stacktrace
+        run: gradle assembleRelease --no-daemon --stacktrace
 
       - name: 上传 Debug APK
         uses: actions/upload-artifact@v4
