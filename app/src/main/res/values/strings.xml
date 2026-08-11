@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">测试App</string>
+    <string name="register_title">请输入注册码</string>
+    <string name="register_hint">注册码</string>
+    <string name="register_confirm">确认</string>
+    <string name="register_cancel">退出</string>
+    <string name="register_correct">注册码正确</string>
+    <string name="register_wrong">注册码错误</string>
+    <string name="home_title">测试首页</string>
+    <string name="home_welcome">欢迎使用测试App\n您已成功通过注册码验证！</string>
+</resources>

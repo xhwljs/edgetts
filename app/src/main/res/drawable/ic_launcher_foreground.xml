@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- A simple white check mark as the foreground icon -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M43.5,72 L28.5,57 L33,52.5 L43.5,63 L75,31.5 L79.5,36 Z" />
+</vector>
